@@ -1,0 +1,29 @@
+{
+  "name": "rote",
+  "version": "0.0.0",
+  "description": "Tools for making Rogue-like games",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rocket-boots/rote.git"
+  },
+  "keywords": [
+    "roguelike",
+    "rogue",
+    "game",
+    "games",
+    "toolkit"
+  ],
+  "author": "Luke Nickerson",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/rocket-boots/rote/issues"
+  },
+  "homepage": "https://github.com/rocket-boots/rote#readme",
+  "dependencies": {
+    "rot-js": "^2.0.3"
+  }
+}
