@@ -61,31 +61,9 @@ class Game {
 		}
 	}
 
-	// drawMap(map = (this.maps.length - 1)) {
-	// 	if (typeof map === 'number') {
-	// 		map = this.getMap(map);
-	// 	}
-	// 	if (map === undefined || map === 'null' || !(map instanceof Map)) {
-	// 		console.error('invalid map:', map);
-	// 		return;
-	// 	}
-	// 	map.forEachCharacter((char, x, y) => {
-	// 		this.display.draw(x, y, char, '#777', '#222');
-	// 	});
-	// }
-
-	// drawItems() {
-	// 	const mapIndex = (this.maps.length - 1); // FIXME
-	// 	this.items[mapIndex].forEach((item) => {
-	// 		item.draw(this.display);
-	// 	});
-	// }
-
-	// drawActors() {
-	// 	this.actors.forEach((actor) => {
-	// 		actor.draw(this.display);
-	// 	});
-	// }
+	getActiveLevel() {
+		return this.levels[this.activeLevelIndex];
+	}
 
 	createLevel(options = {}) {
 		const level = new Level(options);
@@ -93,31 +71,23 @@ class Game {
 		return level;
 	}
 
-	// getMap(mapIndex = (this.maps.length - 1)) {
-	// 	return this.maps[mapIndex];
-	// }
-
-	// getMapIndex(mapToFind) {
-	// 	let mapIndex = null;
-	// 	this.maps.forEach((map, i) => {
-	// 		if (map === mapToFind) {
-	// 			mapIndex = i;
-	// 		}
-	// 	});
-	// 	return mapIndex;
-	// }
-
-	getActiveLevel() {
-		return this.levels[this.activeLevelIndex];
-	}
-
-	createActor(options = {}) {
+	createActor(options = {}, level) {
 		const actor = new Actor(options);
 		this.scheduler.add(actor, true);
-		if (options.level) {
-			options.level.addActor(actor);
+		level = (level === true) ? this.getActiveLevel() : level;
+		if (level) {
+			level.addActor(actor);
 		}
 		return actor;
+	}
+
+	createItem(options = {}, level) {
+		const item = new Item(options);
+		level = (level === true) ? this.getActiveLevel() : level;
+		if (level) {
+			level.addItem(item);
+		}
+		return item;
 	}
 
 	createHero(options = {}) {
@@ -187,25 +157,6 @@ class Game {
 			alert('You win!');
 		}
 	}
-
-	createItem(options = {}) {
-		const item = new Item(options);
-		if (options.level) {
-			// this.getActiveLevel().addItem(item);
-			options.level.addItem(item);
-		}
-		return item;
-	}
-
-	// addItem(item, map) {
-	// 	const mapIndex = this.getMapIndex(map);
-	// 	this.items[mapIndex].push(item);
-	// }
-
-	// addItems(items, map) {
-	// 	return this.getActiveLevel().addItems(items);
-	// }
-
 }
 
 module.exports = Game;

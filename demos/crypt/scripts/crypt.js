@@ -7,9 +7,9 @@ var g = new rote.Game({
 function generateCrates(level, n = 10) {
 	while (n > 0) {
 		const { x, y } = level.findRandomFreeCell();
-		const crate = g.createItem({ x, y, level, name: 'crate', inventorySize: 1, character: '*' });
+		const crate = g.createItem({ x, y, name: 'crate', inventorySize: 1, character: '*' }, level);
 		if (n === 1) {
-			const amulet = g.createItem({ x, y, level, character: '"', name: 'Amulet of Winning' });
+			const amulet = g.createItem({ x, y, character: '"', name: 'Amulet of Winning' }, level);
 			crate.addItem(amulet);
 		}
 		n--;
@@ -35,7 +35,12 @@ rote.ready(() => {
 	// Enemy
 	{
 		const { x, y } = level.findRandomFreeCell();
-		g.createActor({ x, y, level, name: 'Pedro', color: '#f44', character: 'P' });
+		const boss = g.createActor({ x, y, name: 'Pedro', color: '#f44', character: 'P' }, level);
+		boss.act = function () {
+			this.setPathTo(level.getMap(), g.hero.x, g.hero.y);
+			this.moveAlongPath();
+			// g.moveActor(boss, 4);
+		};
 	}
 	// Crates
 	generateCrates(level, 10);

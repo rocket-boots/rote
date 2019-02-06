@@ -7,23 +7,28 @@ _**RO**guelike **T**ools, **E**xtended_ -- a library containing tools to help ma
 
 - [x] Rot.js tutorial, part 1
 - [x] Rot.js tutorial, part 2
-- [ ] Level/Zone work
-- [ ] Scheduler
-- [ ] Rot.js tutorial, part 3
+- [x] Level work
+- [x] Basic Scheduler
+- [x] Rot.js tutorial, part 3
 - [ ] Screen-centering
+- [ ] FOV / Fog of war
+- [ ] Lighting
+
 - [ ] Engine work
 - [ ] Animation for combat
 - [ ] Console improvements
 - [ ] Level travel
 - [ ] Hero health, death
-- [ ] FOV / Fog of war
-- [ ] Lighting
+
+- [ ] Level/map seeds
 - [ ] Data-based level generation
 - [ ] Data-based monster generation
 - [ ] Data-based item generation
 - [ ] Key re-mapping
 - [ ] Hero Inventory UI
 - [ ] Chunking levels
+- [ ] Zone work
+- [ ] Action-duration scheduler
 - [ ] Combat system, moddable
 - [ ] Magic system, moddable
 - [ ] Item identification

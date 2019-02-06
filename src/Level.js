@@ -8,6 +8,10 @@ class Level {
 		this.items = [];
 	}
 
+	getMap() {
+		return this.map;
+	}
+
 	draw(display) {
 		this.drawMap(display);
 		this.drawItems(display);

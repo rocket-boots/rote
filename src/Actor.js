@@ -1,3 +1,4 @@
+const ROT = require('rot-js');
 const Inventory = require('./Inventory');
 
 class Actor {
@@ -11,6 +12,11 @@ class Actor {
 		this.inventory = new Inventory({
 			size: options.inventorySize || 10
 		});
+		this.path = [];
+	}
+
+	setPath(path) {
+		this.path = path;
 	}
 
 	draw(display) {
@@ -25,6 +31,31 @@ class Actor {
 		this.x += parseInt(x, 10);
 		this.y += parseInt(y, 10);
 		// console.log('moved', x, y, 'to', this.x, this.y);
+	}
+
+	moveAlongPath() {
+		this.path.shift();
+		if (this.path.length <= 1) {
+			alert("Reached target");
+			return;
+		}
+		const { x, y } = this.path[0];
+		this.x = x;
+		this.y = y;
+	}
+
+	setPathTo(map, x = 0, y = 0) {
+		const passableCallback = function(x, y) {
+			return map.getCellPassability(x, y);
+		};
+		const astar = new ROT.Path.AStar(x, y, passableCallback, { topology: 4 });
+		const path = [];
+		const pathCallback = function(x, y) {
+			path.push({ x, y });
+		};
+		astar.compute(this.x, this.y, pathCallback);
+		this.setPath(path);
+		return true;
 	}
 }
 
