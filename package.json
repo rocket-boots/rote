@@ -2,9 +2,12 @@
   "name": "rote",
   "version": "0.0.0",
   "description": "Tools for making Rogue-like games",
-  "main": "index.js",
+  "private": true,
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -25,5 +28,9 @@
   "homepage": "https://github.com/rocket-boots/rote#readme",
   "dependencies": {
     "rot-js": "^2.0.3"
+  },
+  "devDependencies": {
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1"
   }
 }

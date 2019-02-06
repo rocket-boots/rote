@@ -1,0 +1,21 @@
+{
+  "name": "crypt",
+  "version": "0.0.1",
+  "description": "Sample Roguelike Game",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "roguelike",
+    "rogue-like",
+    "sample"
+  ],
+  "author": "Luke Nickerson",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.11",
+    "rote": "github:rocket-boots/rote#master"
+  }
+}

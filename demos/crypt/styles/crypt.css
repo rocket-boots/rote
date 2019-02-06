@@ -1,0 +1,26 @@
+body, html {
+	margin: 0;
+	padding: 0;
+	background: #000;
+	color: #ddd;
+	font-family: 'AppleII', monospace;
+}
+
+canvas {
+	border: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+@font-face {
+	font-family: "AppleII";
+	src: url("../../../fonts/AppleII.ttf");
+}
+
+@font-face {
+	font-family: "Fix15MonoBold";
+	src: url("../../../fonts/Fix15Mono-Bold.woff");
+}
+
+@font-face {
+	font-family: "White Rabbit";
+	src: url("../../../fonts/whitrabt.ttf");
+}
