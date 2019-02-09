@@ -30,13 +30,24 @@ const WASD_KEYMAP = {
 };
 const WASD_DIAGONAL = {
 	...WASD_KEYMAP,
-	// TODO
+	81: 'UP-LEFT', // q
+	69: 'UP-RIGHT', // e
+	90: 'DOWN-LEFT', // z
+	67: 'DOWN-RIGHT', // c
 };
 const VI_KEYMAP = {
-	// TODO
+	72: 'LEFT', // h
+	74: 'DOWN', // j
+	75: 'UP', // k
+	76: 'RIGHT', // l
+
 };
 const VI_DIAGONAL = {
-	// TODO
+	...VI_KEYMAP,
+	89: 'UP-LEFT', // y
+	85: 'UP-RIGHT', // u
+	66: 'DOWN-LEFT', // b
+	78: 'DOWN-RIGHT', // n
 };
 
 

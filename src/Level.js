@@ -13,6 +13,7 @@ class Level {
 	}
 
 	draw(display) {
+		display.clear();
 		this.drawMap(display);
 		this.drawItems(display);
 		this.drawActors(display);

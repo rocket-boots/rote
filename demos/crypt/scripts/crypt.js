@@ -19,6 +19,13 @@ function generateCrates(level, n = 10) {
 rote.ready(() => {
 	// g.setupEngine();
 
+	// Connect to browser DOM for display
+	g.createDisplay({ width: 60, height: 30, fontSize: 20,
+		// fontFamily: "AppleII"
+		fontFamily: "Fix15MonoBold"
+		// fontFamily: "White Rabbit"
+	});
+
 	// Build the game world
 	const level = g.createLevel({
 		map: {
@@ -45,13 +52,7 @@ rote.ready(() => {
 	// Crates
 	generateCrates(level, 10);
 	
-
-	// Connect to browser DOM for display
-	g.createDisplay({ width: 60, height: 30, fontSize: 20,
-		// fontFamily: "AppleII"
-		fontFamily: "Fix15MonoBold"
-		// fontFamily: "White Rabbit"
-	});
+	// draw away!
 	g.draw();
 
 	g.setupEngine();

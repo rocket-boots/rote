@@ -1,4 +1,5 @@
 const ROT = require('rot-js');
+const Display = require('./Display');
 const Level = require('./Level');
 const Actor = require('./Actor');
 const Item = require('./Item');
@@ -39,11 +40,8 @@ class Game {
 	}
 
 	createDisplay(options = {}) {
-		options = { width: 60, height: 30, ...options };
-		this.display = new ROT.Display(options); // , layout:"term"});
-		const elt = this.display.getContainer();
-		// console.log(elt, this.displayContainer);
-		this.displayContainer.appendChild(elt);
+		this.display = new Display(options);
+		this.display.setupElements();
 	}
 
 	print(str) {
@@ -99,29 +97,13 @@ class Game {
 			g.engine.lock();
 			window.addEventListener('keydown', this); // pass the hero; the `handleEvent` will be used
 		};
-		this.hero.handleEvent = function (e) {
-			// console.log('handleEvent', e.keyCode);
-			// var keyMap = {};
-			// keyMap[38] = 0; // up
-			// keyMap[33] = 1;
-			// keyMap[39] = 2; // right
-			// keyMap[34] = 3;
-			// keyMap[40] = 4; // down
-			// keyMap[35] = 5;
-			// keyMap[37] = 6; // left
-			// keyMap[36] = 7;
-		 
-			// var code = e.keyCode;
-		 
-			// if (!(code in keyMap)) {
-			// 	return;
-			// }
-
-			// g.moveActor(this, keyMap[code]);
-
+		this.hero.handleEvent = function (e) { // Leftover from tutorial, part 2
 			window.removeEventListener('keydown', this);
 			g.engine.unlock();
 		};
+		if (this.display) {
+			this.display.setCameraTarget(this.hero);
+		}
 		return this.hero;
 	}
 
