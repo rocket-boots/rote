@@ -1,4 +1,5 @@
 const Map = require('./Map');
+const geometer = require('./geometer');
 
 class Level {
 	constructor(options = {}) {
@@ -6,10 +7,7 @@ class Level {
 		this.map = new Map(options.map);
 		this.actors = [];
 		this.items = [];
-	}
-
-	getMap() {
-		return this.map;
+		this.eye = { x: 0, y: 0, viewRange: 7 };
 	}
 
 	draw(display) {
@@ -21,20 +19,33 @@ class Level {
 
 	drawMap(display) {
 		this.map.forEachCell((cell, x, y) => {
-			display.draw(x, y, cell.character, cell.getForegroundColor(), cell.getBackgroundColor());
+			const inView = this.isInView(x, y);
+			// TODO: improve this
+			const fg = cell.getForegroundColor(inView);
+			const bg = cell.getBackgroundColor(inView);
+			display.draw(x, y, cell.character, fg, bg);
 		});
 	}
 
 	drawItems(display) {
 		this.items.forEach((item) => {
-			item.draw(display);
+			const lighting = this.map.getLightingAt(this.eye.x, this.eye.y);
+			const inView = this.isInView(item.x, item.y);
+			item.draw(display, lighting, inView);
 		});
 	}
 
 	drawActors(display) {
 		this.actors.forEach((actor) => {
-			actor.draw(display);
+			const lighting = this.map.getLightingAt(this.eye.x, this.eye.y);
+			const inView = this.isInView(actor.x, actor.y);
+			actor.draw(display, lighting, inView);
 		});
+	}
+
+	isInView(x, y) { // TODO: optimize
+		const r = geometer.getDistance(this.eye.x, this.eye.y, x, y); // TODO: allow more complicated POV
+		return (r <= this.eye.viewRange);		
 	}
 
 	addItem(item) {
@@ -64,6 +75,20 @@ class Level {
 
 	discoverCircle(x, y, radius) {
 		return this.map.discoverCircle(x, y, radius);
+	}
+
+	// Gets
+
+	getMap() {
+		return this.map;
+	}
+
+	// Sets
+
+	setEye(actorThing) {
+		this.eye.x = actorThing.x;
+		this.eye.y = actorThing.y;
+		this.eye.viewRange = actorThing.viewRange;
 	}
 }
 

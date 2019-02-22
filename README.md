@@ -24,7 +24,7 @@ _**RO**guelike **T**ools, **E**xtended_ -- a library containing tools to help ma
 - [x] Alternate movement (8-directional vi: hjkl+yubn, 8-directional wasd+qezc)
 - [x] Cell data structure
 - [x] Fog of war / exploration
-- [ ] Basic circular FOV
+- [x] Basic circular FOV
 - [ ] FOV based on environment
 - [ ] Lighting
 

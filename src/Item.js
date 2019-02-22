@@ -13,8 +13,8 @@ class Item {
 		this.containedIn = null;
 	}
 
-	draw(display) {
-		if (this.containedIn) { // Not visible if in a container
+	draw(display, lighting = {}, inView = false) {
+		if (this.containedIn || !inView) { // Not visible if in a container
 			return false;
 		}
 		display.draw(this.x, this.y, this.character, this.color);

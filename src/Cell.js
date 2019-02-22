@@ -17,12 +17,18 @@ class Cell {
 		return this.character;
 	}
 
-	getForegroundColor() {
-		return (this.discovered) ? this.color : '#000';
+	getForegroundColor(inView = true) {
+		if (!this.discovered) {
+			return '#000';
+		}
+		return (inView) ? this.color : '#232120';
 	}
 
-	getBackgroundColor() {
-		return (this.discovered) ? this.background : '#000';
+	getBackgroundColor(inView = true) {
+		if (!this.discovered) {
+			return '#000';
+		}
+		return (inView) ? this.background : '#111010';
 	}
 
 	// Sets

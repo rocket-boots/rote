@@ -89,7 +89,7 @@ class Game {
 	}
 
 	createHero(options = {}) {
-		this.hero = this.createActor(options);
+		this.hero = this.createActor(options, true);
 
 		const g = this;
 		// Setup action stuff ... this needs to be refactored
@@ -151,7 +151,9 @@ class Game {
 	}
 
 	discoverAroundHero() {
-		this.getActiveLevel().discoverCircle(this.hero.x, this.hero.y, this.hero.viewRange); // TODO: allow different POV
+		const level = this.getActiveLevel();
+		level.discoverCircle(this.hero.x, this.hero.y, this.hero.viewRange); // TODO: allow different POV
+		level.setEye(this.hero);
 	}
 }
 

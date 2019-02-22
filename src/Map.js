@@ -1,5 +1,6 @@
 const ROT = require('rot-js');
 const Cell = require('./Cell');
+const geometer = require('./geometer');
 
 class Map {
 	constructor(options = {}) {
@@ -78,13 +79,6 @@ class Map {
 		}
 	}
 
-	static getDistance(x1, y1, x2, y2) {
-		return Math.sqrt(
-			Math.pow((x1 - x2), 2)
-			+ Math.pow((y1 - y2), 2)
-		);
-	}
-
 	forEachCell(callback) {
 		for (let key in this.cells) {
 			const { x, y } = Map.parseKeyCoordinates(key);
@@ -99,8 +93,7 @@ class Map {
 		for (x = centerX - radius; x <= maxX; x++) {
 			let y;
 			for (y = centerY - radius; y <= maxY; y++) {
-				// TODO: check for circularness
-				const r = Math.round(Map.getDistance(centerX, centerY, x, y));
+				const r = Math.round(geometer.getDistance(centerX, centerY, x, y));
 				if (r < radius) {
 					const cell = this.getCellAt(x, y);
 					if (cell || includeEmptyCells) {
@@ -146,6 +139,10 @@ class Map {
 	getCellPassability(x, y) {
 		const cell = this.getCellAt(x, y);
 		return (cell) ? cell.getPassability() : false;
+	}
+
+	getLightingAt(x, y) {
+		return {}; // TODO
 	}
 
 	// _generateBoxes(freeCells) {

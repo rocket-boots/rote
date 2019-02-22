@@ -20,8 +20,13 @@ class Actor {
 		this.path = path;
 	}
 
-	draw(display) {
+	draw(display, lighting = {}, inView = false) {
+		if (!inView) {
+			return false;
+		}
+		// TODO: adjust colors based on lighting and inView
 		display.draw(this.x, this.y, this.character, this.color);
+		return true;
 	}
 
 	act() {
