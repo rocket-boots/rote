@@ -13,6 +13,7 @@ class Actor {
 			size: options.inventorySize || 10
 		});
 		this.path = [];
+		this.viewRange = 7;
 	}
 
 	setPath(path) {

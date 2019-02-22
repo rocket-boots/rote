@@ -30,7 +30,7 @@ class Game {
 		this.keyboard = new Keyboard({ state: 'GAME', autoStart: true });
 		this.keyboard.on('GAME', 'DIRECTION', (keyName, keyCode, direction) => {
 			// TODO: Lock and unlock the game? or do something else to determine if it's OK to move
-			this.moveActor(this.hero, direction);
+			this.moveHero(direction);
 		});
 		this.keyboard.on('GAME', 'ENTER', () => {
 			this.actorOpenItem(this.hero);
@@ -104,25 +104,35 @@ class Game {
 		if (this.display) {
 			this.display.setCameraTarget(this.hero);
 		}
+		this.discoverAroundHero();
 		return this.hero;
 	}
 
+	moveHero(direction) {
+		const {x, y, moved} = this.moveActor(this.hero, direction);
+		if (!moved) {
+			return;
+		}
+		this.discoverAroundHero();
+		this.draw(); // TODO: make more efficient than drawing twice
+	}
+
 	moveActor(actor, direction) {
-		var diff = ROT.DIRS[8][direction];
-			
+		const diff = ROT.DIRS[8][direction];
 		var newX = actor.x + diff[0];
 		var newY = actor.y + diff[1];
 	 
 		const canMoveToCell = this.getActiveLevel().map.getCellPassability(newX, newY);
 		// console.log('considering moving', diff[0], diff[1], 'to', newX, newY, '... free?', canMoveToCell);
 		if (!canMoveToCell) {
-			return;
+			return { x: newX, y: newY, moved: false };
 		}
 
 		// Do the move
 		actor.move(diff[0], diff[1]);
 		// TODO: just redraw the space that was under the hero and the hero in his new spot?
-		this.draw();		
+		this.draw();
+		return { x: newX, y: newY, moved: true };
 	}
 
 	actorOpenItem(actor) {
@@ -138,6 +148,10 @@ class Game {
 		if (hasWin) {
 			alert('You win!');
 		}
+	}
+
+	discoverAroundHero() {
+		this.getActiveLevel().discoverCircle(this.hero.x, this.hero.y, this.hero.viewRange); // TODO: allow different POV
 	}
 }
 

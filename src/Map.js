@@ -5,15 +5,14 @@ class Map {
 	constructor(options = {}) {
 		this.type = options.type || 'digger';
 		this.rotMap = options.rotMap;
-		// this.cells = {}; // TODO: implement this
-		this.characterMap = {};
+		this.cells = {};
 		this.freeCells = [];
 		this.generate(options);
 	}
 
 	generate(options) {
 		options = { type: 'digger', ...options };
-		this.characterMap = {};
+		this.cells = {};
 		// TODO: allow different types
 		this.rotMap = new ROT.Map.Digger();
 		this.freeCells.length = 0;
@@ -34,15 +33,21 @@ class Map {
 	}
 
 	addWalls() {
-		this.forEachCharacter((char, x, y) => {
+		this.forEachCell((cell, x, y) => {
 			Map.forEachDirection((dir, dirX, dirY) => {
 				const newX = x + dirX;
 				const newY = y + dirY;
-				const char = this.getCharacterAt(newX, newY);
-				if (char === undefined || char === '') {
+				const wallCell = this.getCellAt(newX, newY);
+				if (!wallCell) {
 					this.setCharacterAt('#', newX, newY);
 				}
 			});
+		});
+	}
+
+	discoverCircle(x, y, radius) {
+		this.forEachCellInCircle(x, y, radius, (cell) => {
+			cell.discover();
 		});
 	}
 
@@ -73,10 +78,36 @@ class Map {
 		}
 	}
 
-	forEachCharacter(callback) {
-		for (let key in this.characterMap) {
+	static getDistance(x1, y1, x2, y2) {
+		return Math.sqrt(
+			Math.pow((x1 - x2), 2)
+			+ Math.pow((y1 - y2), 2)
+		);
+	}
+
+	forEachCell(callback) {
+		for (let key in this.cells) {
 			const { x, y } = Map.parseKeyCoordinates(key);
-			callback(this.characterMap[key], x, y, key);
+			callback(this.cells[key], x, y, key);
+		}
+	}
+
+	forEachCellInCircle(centerX, centerY, radius, callback, includeEmptyCells = false) {
+		const maxX = centerX + radius;
+		const maxY = centerY + radius;
+		let x;
+		for (x = centerX - radius; x <= maxX; x++) {
+			let y;
+			for (y = centerY - radius; y <= maxY; y++) {
+				// TODO: check for circularness
+				const r = Math.round(Map.getDistance(centerX, centerY, x, y));
+				if (r < radius) {
+					const cell = this.getCellAt(x, y);
+					if (cell || includeEmptyCells) {
+						callback(cell, x, y)
+					}
+				}
+			}
 		}
 	}
 
@@ -86,28 +117,35 @@ class Map {
 		// var key = freeCells.splice(index, 1)[0];
 		// this.map[key] = "*";
 		const key = this.freeCells[i];
-		const character = this.characterMap[key];
+		const cell = this.cells[key];
 		const { x, y } = Map.parseKeyCoordinates(key);
-		return { x, y, character };
+		return { x, y, cell };
+	}
+
+	getCellAt(x, y) {
+		const key = Map.makeKey(x, y);
+		return this.cells[key];		
 	}
 
 	getCharacterAt(x, y) {
-		const key = Map.makeKey(x, y);
-		return this.characterMap[key];
+		const cell = this.getCellAt(x, y);
+		return (cell) ? cell.getCharacter() : null;
 	}
 
 	setCharacterAt(char, x, y) {
 		const key = Map.makeKey(x, y);
-		this.characterMap[key] = char;
+		const cell = this.cells[key];
+		if (cell) {
+			cell.setCharacter(char);
+		} else {
+			this.cells[key] = new Cell({ character: char });
+		}
 		return key;
 	}
 
 	getCellPassability(x, y) {
-		const char = this.getCharacterAt(x, y);
-		if (char === '.') {
-			return true;
-		}
-		return false;
+		const cell = this.getCellAt(x, y);
+		return (cell) ? cell.getPassability() : false;
 	}
 
 	// _generateBoxes(freeCells) {

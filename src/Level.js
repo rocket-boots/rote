@@ -20,8 +20,8 @@ class Level {
 	}
 
 	drawMap(display) {
-		this.map.forEachCharacter((char, x, y) => {
-			display.draw(x, y, char, '#777', '#222');
+		this.map.forEachCell((cell, x, y) => {
+			display.draw(x, y, cell.character, cell.getForegroundColor(), cell.getBackgroundColor());
 		});
 	}
 
@@ -60,6 +60,10 @@ class Level {
 
 	findRandomFreeCell() {
 		return this.map.getRandomFreeCell();
+	}
+
+	discoverCircle(x, y, radius) {
+		return this.map.discoverCircle(x, y, radius);
 	}
 }
 
