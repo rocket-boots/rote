@@ -57,23 +57,23 @@ class KeyboardListener {
 	constructor(options = {}) {
 		this.callbacks = {};
 		this.isListening = false;
-		this.stateName = options.state || options.stateName || UNSPECIFIED_STATE;
+		this.state = options.state || UNSPECIFIED_STATE;
 		this.autoStart = (options.autoStart === undefined) ? false : Boolean(options.autoStart);
 	}
 
-	setState(stateName = UNSPECIFIED_STATE) {
-		this.setState = stateName.toString();
+	setState(state = UNSPECIFIED_STATE) {
+		this.setState = state.toString();
 	}
 
-	on(stateName, key, callback) {
+	on(state, key, callback) {
 		// key can be a keyCode or a keyType like 'DIRECTION'
-		this.callbacks[stateName + '_' + key] = callback;
+		this.callbacks[state + '_' + key] = callback;
 		if (this.autoStart) {
 			this.start();
 		}
 	}
 	
-	off(stateName, key, callback) {
+	off(state, key, callback) {
 		// TODO: remove callback
 		// TODO: if no more callbacks then stop
 	}
@@ -102,13 +102,13 @@ class KeyboardListener {
 
 		// Callbacks
 		if (direction !== undefined) {
-			const typeCallback = this.callbacks[this.stateName + '_DIRECTION'];
+			const typeCallback = this.callbacks[this.state + '_DIRECTION'];
 			if (typeCallback) {
 				typeCallback(keyName, keyCode, direction);
 			}
 		}
-		const callback = this.callbacks[this.stateName + '_' + keyName];
-		// console.log(this.stateName + '_' + keyName, callback);
+		const callback = this.callbacks[this.state + '_' + keyName];
+		// console.log(this.state + '_' + keyName, callback);
 		if (callback) {
 			callback(keyName, keyCode, direction);
 		}

@@ -52,9 +52,6 @@ rote.ready(() => {
 	// Crates
 	generateCrates(level, 10);
 	
-	// draw away!
-	g.draw();
 
-	g.setupEngine();
-	g.setupKeyboard();
+	g.start();
 });

@@ -5,6 +5,8 @@ const Actor = require('./Actor');
 const Item = require('./Item');
 const Keyboard = require('./KeyboardListener');
 
+const MAIN_GAME_STATE = 'GAME';
+
 class Game {
 	constructor({ id, consoleId }) {
 		this.id = id;
@@ -17,6 +19,7 @@ class Game {
 		this.scheduler = new ROT.Scheduler.Simple();
 		this.engine = null;
 		this.keyboard = null;
+		this.state = 'INIT';
 		// this.setupEngine();
 	}
 
@@ -27,16 +30,20 @@ class Game {
 	}
 
 	setupKeyboard() {
-		this.keyboard = new Keyboard({ state: 'GAME', autoStart: true });
-		this.keyboard.on('GAME', 'DIRECTION', (keyName, keyCode, direction) => {
+		this.keyboard = new Keyboard({ state: MAIN_GAME_STATE, autoStart: true });
+		this.keyboard.on(MAIN_GAME_STATE, 'DIRECTION', (keyName, keyCode, direction) => {
 			// TODO: Lock and unlock the game? or do something else to determine if it's OK to move
 			this.moveHero(direction);
 		});
-		this.keyboard.on('GAME', 'ENTER', () => {
+		this.keyboard.on(MAIN_GAME_STATE, 'ENTER', () => {
 			this.actorOpenItem(this.hero);
 		});
 		// this.keyboard.start();
 		console.log(this.keyboard);
+	}
+
+	removeKeyboard() {
+		// TODO: this.keyboard.off() on all listeners
 	}
 
 	createDisplay(options = {}) {
@@ -154,6 +161,25 @@ class Game {
 		const level = this.getActiveLevel();
 		level.discoverCircle(this.hero.x, this.hero.y, this.hero.viewRange); // TODO: allow different POV
 		level.setEye(this.hero);
+	}
+
+	start() {
+		this.setupEngine();
+		this.setupKeyboard();
+		this.setState(MAIN_GAME_STATE);
+		// TODO: start graphics loop
+		this.draw();
+	}
+
+	stop() {
+		this.setState('OFF');
+		this.removeKeyboard();
+		// TODO: stop graphics loop
+	}
+
+	setState(state) {
+		this.state = state;
+		this.keyboard.setState(state);
 	}
 }
 
