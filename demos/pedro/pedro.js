@@ -8,16 +8,35 @@ function createPlayerCharacter(level) {
 function generateEnemy(level) {
 	const { x, y } = level.findRandomFreeCell();
 	const boss = g.createActor({ x, y, name: 'Pedro', color: '#f44', character: 'P' }, level);
+	boss.setTarget(g.hero);
 	boss.act = function () {
-		this.setPathTo(level.getMap(), g.hero.x, g.hero.y);
-		this.moveAlongPath();
+		this.setPathToTarget(level.getMap());
+		if (this.atEndOfPath(1)) {
+			this.attack();
+			g.print(`${this.name} attacks!`);
+		} else {
+			this.moveAlongPath();
+		}
 	};
+}
+
+function openCrate(item) {
+	const hasWin = item.contains('Amulet of Winning');
+	const what = (item.hasContents()) ? item.getContents(0).name : 'nothing';
+	g.print(`The hero opens the ${item.name}, and finds ${what}.`);
+	if (hasWin) {
+		g.print('You win!');
+	}
 }
 
 function generateCrates(level, n = 10) {
 	while (n > 0) {
 		const { x, y } = level.findRandomFreeCell();
-		const crate = g.createItem({ x, y, name: 'crate', inventorySize: 1, character: '*' }, level);
+		const on = {
+			open: openCrate
+		};
+		const crateOptions = { x, y, on, name: 'crate', inventorySize: 1, character: '*' };
+		const crate = g.createItem(crateOptions, level);
 		if (n === 1) {
 			const amulet = g.createItem({ x, y, character: '"', name: 'Amulet of Winning' }, level);
 			crate.addItem(amulet);
@@ -42,4 +61,5 @@ rote.ready(() => {
 	generateCrates(level, 10);
 	// Start the game
 	g.start();
+	g.print('Move with your favorite movement keys, open crates with Enter, and avoid Pedro.')
 });

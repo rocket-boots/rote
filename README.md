@@ -57,30 +57,25 @@ Other improvements:
 
 ### Actual game
 
+- [x] Console improvements
 - [ ] Props (extend Items)
 - [ ] Blocks
-- [ ] Console improvements
 - [ ] Options menu
-
 - [ ] Engine work
 - [ ] Action-duration scheduler
 - [ ] Hero Inventory UI
-
 - [ ] Data-based level generation
 - [ ] Data-based monster generation
 - [ ] Data-based item generation
 - [ ] Data-based props generation
-
 - [ ] Status effects
 - [ ] Basic bump combat
 - [ ] Basic 8-dir ranged combat
 - [ ] Hero health, death
 - [ ] Different AI behaviors
-
 - [ ] Level travel
 - [ ] Level/map seeds
 - [ ] Doors (props), logical door placement
-
 - [ ] States for items, with different colors or characters
 - [ ] Character sheet
 - [ ] Save/Loading
@@ -101,3 +96,4 @@ Other improvements:
 - [ ] Music
 - [ ] Hero AI mode (auto-exploring)
 - [ ] Advanced state system with moddable enter/leave methods
+- [ ] Allow text input via input text field in Console

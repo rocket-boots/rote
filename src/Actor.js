@@ -14,6 +14,7 @@ class Actor {
 		});
 		this.path = [];
 		this.viewRange = 7;
+		this.target = null;
 	}
 
 	setPath(path) {
@@ -30,7 +31,15 @@ class Actor {
 	}
 
 	act() {
+		// TODO
+	}
 
+	attack(who) {
+		// TODO
+	}
+
+	atEndOfPath(within = 0) {
+		return (this.path.length <= within);
 	}
 
 	move(x, y) {
@@ -41,8 +50,9 @@ class Actor {
 
 	moveAlongPath() {
 		this.path.shift();
-		if (this.path.length <= 1) {
-			alert("Reached target");
+		if (this.path.length <= 0) {
+			// this.attack();
+			// alert("Reached target");
 			return;
 		}
 		const { x, y } = this.path[0];
@@ -62,6 +72,18 @@ class Actor {
 		astar.compute(this.x, this.y, pathCallback);
 		this.setPath(path);
 		return true;
+	}
+
+	setPathToTarget(map) {
+		this.setPathTo(map, this.target.x, this.target.y);
+	}
+
+	setTarget(target) {
+		if (typeof target.x !== 'number' || typeof target.y !== 'number') {
+			console.warn('Cannot set target to something without x,y');
+			return;
+		}
+		this.target = target;
 	}
 }
 

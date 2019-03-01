@@ -4,6 +4,7 @@ const Level = require('./Level');
 const Actor = require('./Actor');
 const Item = require('./Item');
 const Keyboard = require('./KeyboardListener');
+const Console = require('./Console');
 
 const MAIN_GAME_STATE = 'GAME';
 
@@ -11,7 +12,7 @@ class Game {
 	constructor({ id, consoleId }) {
 		this.id = id;
 		this.displayContainer = document.getElementById(id || 'display');
-		this.consoleContainer = document.getElementById(consoleId || 'console');
+		this.console = new Console({ id: consoleId });
 		this.display = null;
 		this.activeLevelIndex = 0;
 		this.levels = [];
@@ -21,6 +22,7 @@ class Game {
 		this.keyboard = null;
 		this.state = 'INIT';
 		// this.setupEngine();
+		this.console.setup();
 	}
 
 	setupEngine() {
@@ -52,11 +54,7 @@ class Game {
 	}
 
 	print(str) {
-		if (!str) {
-			return;
-		}
-		console.log('%c' + str, 'color: #559955');
-		this.consoleContainer.innerHTML += '<br/>' + str.replace('<', '&lt;');
+		this.console.print(str);
 	}
 
 	draw() {
@@ -148,13 +146,7 @@ class Game {
 		if (!itemOnCell) {
 			return;
 		}
-		// TODO: Remove
-		const hasWin = itemOnCell.contains('Amulet of Winning');
-		const what = (itemOnCell.hasContents()) ? itemOnCell.getContents(0).name : 'nothing';
-		this.print(`The hero opens the ${itemOnCell.name}, and finds ${what}.`);
-		if (hasWin) {
-			alert('You win!');
-		}
+		itemOnCell.action('open', actor);
 	}
 
 	discoverAroundHero() {

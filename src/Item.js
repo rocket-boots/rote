@@ -11,6 +11,15 @@ class Item {
 			size: options.inventorySize || 0
 		});
 		this.containedIn = null;
+		this.actions = { ...options.on };
+	}
+
+	action(actionName, who) {
+		if (typeof this.actions[actionName] !== 'function') {
+			console.warn('No action', actionName, 'for item', this);
+			return;
+		}
+		this.actions[actionName](this, who);
 	}
 
 	draw(display, lighting = {}, inView = false) {
