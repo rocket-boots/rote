@@ -1,0 +1,14 @@
+{
+	"monsters": {
+		"k": {
+			"name": "kobold", "plural": "kobolds",
+			"character": "k", "color": "#6f9",
+			"hp": 2
+		},
+		"s": {
+			"name": "spider", "plural": "spiders",
+			"character": "s", "color": "#c0f",
+			"hp": 2
+		}
+	}
+}

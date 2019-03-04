@@ -1,4 +1,14 @@
-var g = new rote.Game({ id: 'display', keyboard: 'multi-move' });
+var g = new rote.Game({
+	rote,
+	id: 'display',
+	keyboard: 'multi-move',
+	data: {
+		monsters: 'data/monsters.json',
+		items: 'data/items.json',
+		props: 'data/props.json',
+		levels: 'data/levels.json'
+	},
+});
 
 function createPlayerCharacter(level) {
 	const { x, y } = level.findRandomFreeCell();
@@ -45,7 +55,7 @@ function generateCrates(level, n = 10) {
 	}
 }
 
-rote.ready(() => {
+function runGame () {
 	// Connect to browser DOM for display
 	g.createDisplay({
 		width: 60,
@@ -54,12 +64,23 @@ rote.ready(() => {
 		fontFamily: "Fix15MonoBold" // alternatives: "AppleII" or "White Rabbit"
 	});
 	// Build the game world
-	const level = g.createLevel({ map: { type: 'digger', walls: true } });
+	// const level = g.createLevel({ map: { type: 'digger', walls: true } });
+	g.createLevels([
+		'town',
+		{ levelTypeKey: 'dungeon', repeat: 7 },
+		'docks',
+		'gizmo',
+	]);
+	const topLevel = g.levels[0];
 	// Create pcs, npcs, items
-	createPlayerCharacter(level);
-	generateEnemy(level);
-	generateCrates(level, 10);
+	createPlayerCharacter(topLevel);
+	generateEnemy(topLevel);
+	generateCrates(topLevel, 10);
 	// Start the game
 	g.start();
-	g.print('Move with your favorite movement keys, open crates with Enter, and avoid the Spider.')
-});
+	g.print('Move with your favorite movement keys, open crates with Enter, and avoid the Spider.');
+	console.log('The Game:', g);
+
+}
+
+g.ready(runGame);

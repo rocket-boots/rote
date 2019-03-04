@@ -1,0 +1,20 @@
+{
+	"levels": {
+		"town": {
+			"name": "Town",
+			"map": { "type": "digger", "walls": true, "stairsDown": 1 }
+		},
+		"dungeon": {
+			"name": "Basic Dungeon Level",
+			"map": { "type": "digger", "walls": true, "stairs": "both" }
+		},
+		"docks": {
+			"name": "Docks (level 9)",
+			"map": { "type": "digger", "walls": true, "stairs": "both" }
+		},
+		"gizmo": {
+			"name": "Gizmo Room (Final Level)",
+			"map": { "type": "digger", "walls": true, "stairsUp": 1 }
+		}
+	}
+}

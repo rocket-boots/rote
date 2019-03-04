@@ -29,6 +29,9 @@ class Map {
 		if (options.walls) {
 			this.addWalls();
 		}
+
+		// TODO:
+		// Deal with options.stairs (string), options.stairsUp, options.stairsDown
 		
 		console.log(this);
 	}

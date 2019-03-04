@@ -10,7 +10,7 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 
 #### Dungeon
 
-- [ ] Data-based level configuration
+- [x] Data-based level configuration
 - [ ] Stairs, ability to go down
 - [ ] Game seed that is used to make multiple levels with different layouts
 - [ ] 10 Levels

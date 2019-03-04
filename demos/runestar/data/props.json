@@ -1,0 +1,9 @@
+{
+	"props": {
+		"pedestal": {
+			"name": "Pedestal",
+			"character": "*",
+			"color": "#f99"
+		}
+	}
+}

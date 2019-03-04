@@ -1,0 +1,9 @@
+{
+	"items": {
+		"axe": {
+			"name": "Axe",
+			"character": "\\",
+			"color": "#ccc"
+		}
+	}
+}

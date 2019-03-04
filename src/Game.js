@@ -1,4 +1,5 @@
 const ROT = require('rot-js');
+const domReady = require('./ready');
 const Display = require('./Display');
 const Level = require('./Level');
 const Actor = require('./Actor');
@@ -9,20 +10,28 @@ const Console = require('./Console');
 const MAIN_GAME_STATE = 'GAME';
 
 class Game {
-	constructor({ id, consoleId }) {
+	constructor({ rote, id, consoleId, data }) {
+		this.rote = rote;
 		this.id = id;
 		this.displayContainer = document.getElementById(id || 'display');
 		this.console = new Console({ id: consoleId });
 		this.display = null;
 		this.activeLevelIndex = 0;
+		// The generated levels
 		this.levels = [];
+		// Reference data on prototypical "things" (monsters, items)
+		this.data = { monsters: {}, items: {}, props: {} };
+		// The main actor
 		this.hero = null; // player character / player actor
+		// Guts
 		this.scheduler = new ROT.Scheduler.Simple();
 		this.engine = null;
 		this.keyboard = null;
 		this.state = 'INIT';
 		// this.setupEngine();
+		this.loadingPromise = null;
 		this.console.setup();
+		this.loadData(data);
 	}
 
 	setupEngine() {
@@ -68,10 +77,32 @@ class Game {
 		return this.levels[this.activeLevelIndex];
 	}
 
+	getLevelType(key) {
+		const lt = this.data.levels[key];
+		if (typeof lt !== 'object' || lt === null) {
+			console.error('Cannot find level type ', key);
+		}
+		return lt;
+	}
+
 	createLevel(options = {}) {
 		const level = new Level(options);
 		this.levels.push(level);
 		return level;
+	}
+
+	createLevels(arr = []) {
+		arr.forEach((item) => {
+			if (typeof item === 'string') { // level type key
+				this.createLevel(this.getLevelType(item));
+			} else if (typeof item === 'object' && item !== null) {
+				const n = (typeof item.repeat === 'number') ? item.repeat : 1;
+				for (let i = 0; i < n; i++) {
+					this.createLevel(this.getLevelType(item.levelTypeKey));
+				}
+			}
+		});
+		return this.levels;
 	}
 
 	createActor(options = {}, level) {
@@ -155,6 +186,19 @@ class Game {
 		level.setEye(this.hero);
 	}
 
+	ready(callback) {
+		domReady(() => {
+			if (this.loadingPromise instanceof Promise) {
+				this.loadingPromise
+					.then(() => { callback(); })
+					.catch((err) => { console.error('Error loading something', err) });
+			} else {
+				callback();
+			}
+		});
+		// TODO: return a promise so can be used async
+	}
+
 	start() {
 		this.setupEngine();
 		this.setupKeyboard();
@@ -167,6 +211,23 @@ class Game {
 		this.setState('OFF');
 		this.removeKeyboard();
 		// TODO: stop graphics loop
+	}
+
+	loadData(data) {
+		const promises = [];
+		function parseJson (response) { return response.json(); }
+		function fixInnerObject(obj, key) {
+			return (typeof obj[key] === 'object') ? obj[key] : obj;
+		}
+		for (let key in data) {
+			const p = fetch(data[key])
+				.then(parseJson)
+				.then((obj) => fixInnerObject(obj, key))
+				.then((obj) => { this.data[key] = obj; });
+			promises.push(p);
+		}
+		this.loadingPromise = Promise.all(promises).then((resp) => { console.log(resp); });
+		return this.loadingPromise;
 	}
 
 	setState(state) {
