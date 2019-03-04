@@ -7,14 +7,21 @@ without warning at this stage.
 
 ## Demos
 
-* "Pedro" - A demo containing all of the Rot.js tutorial functionality
+### "Pedro"
+
+A demo containing all of the Rot.js tutorial functionality
+
    * https://rocket-boots.github.io/rote/demos/pedro/
    * Uses rote v0.1.0
-   * Only 50 lines of javascript, 25 lines of html, and less than 40 lines of css
+   * Only ~50 lines of javascript, ~25 lines of html, and ~40 lines of css
    * [View the code](demos/pedro/)
-* "Crypt" - _work in progress_
-   * https://rocket-boots.github.io/rote/demos/crypt/
-   * Uses latest version
+
+### "Runestar: Origins" - _work in progress_
+
+   * [Runestar Readme](demos/runestar/README.md)
+   * https://rocket-boots.github.io/rote/demos/runestar/
+   * Uses rote v0.2.0
+   * [View the code](demos/runestar/)
 
 ## Definitions (WIP)
 
@@ -39,6 +46,13 @@ In the code you'll see these words:
 - [x] Basic Scheduler
 - [x] Rot.js tutorial, part 3
 
+[Further improvements](http://www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_3):
+
+- [x] "Player can crash the game by moving onto Pedro's cell. Not only this is currently allowed, but it also disrupts Pedro's pathfinding (which expects the path to be at least two cells long)." _(doesn't seem to be happening in this implementation)_
+- [x] "The Game.map structure should probably store positions of beings (player, Pedro) as well."
+- [x] "It would be comfortable for users to increase the set of allowed navigation keys (number keys, vi keys)."
+- [ ] "When a box is inspected, its appearance may change (to make it easier for player to distinguish between visited and unvisited boxes)."
+
 Other improvements:
 
 - [x] Screen-centering
@@ -47,17 +61,10 @@ Other improvements:
 - [x] Fog of war / exploration
 - [x] Basic circular FOV
 - [x] Basic State system tied to keyboard controls
-
-[Further improvements](http://www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_3):
-
-- [x] "Player can crash the game by moving onto Pedro's cell. Not only this is currently allowed, but it also disrupts Pedro's pathfinding (which expects the path to be at least two cells long)." _(doesn't seem to be happening in this implementation)_
-- [x] "The Game.map structure should probably store positions of beings (player, Pedro) as well."
-- [x] "It would be comfortable for users to increase the set of allowed navigation keys (number keys, vi keys)."
-- [ ] "When a box is inspected, its appearance may change (to make it easier for player to distinguish between visited and unvisited boxes)."
+- [x] Console improvements
 
 ### Actual game
 
-- [x] Console improvements
 - [ ] Props (extend Items)
 - [ ] Blocks
 - [ ] Options menu

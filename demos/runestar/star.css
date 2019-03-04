@@ -1,0 +1,75 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	background: #000;
+	color: #ddd;
+	font-family: 'AppleII', monospace;
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	display: flex;
+}
+
+.github-banner {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+h1 {
+	color: #777;
+	font-size: 140%;
+	padding-right: 120px;
+}
+
+canvas {
+	border: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+@font-face {
+	font-family: "AppleII";
+	src: url("../../fonts/AppleII.ttf");
+}
+
+@font-face {
+	font-family: "Fix15MonoBold";
+	src: url("../../fonts/Fix15Mono-Bold.woff");
+}
+
+@font-face {
+	font-family: "White Rabbit";
+	src: url("../../fonts/whitrabt.ttf");
+}
+
+.rote {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+}
+
+#console {
+	width: 840px;
+	border: solid 1px rgba(255, 255, 255, 0.1);
+	flex-grow: 1;
+	padding: 1em;
+	box-sizing: border-box;
+	overflow-y: scroll;
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE */
+}
+	#console::-webkit-scrollbar { /* WebKit */
+		width: 0;
+		height: 0;
+	}
+	#console ul {
+		display: block;
+		padding: 0;
+		margin: 0;
+	}
+	#console ul > li {
+		display: block;
+		margin-bottom: 0.5em;
+	}
