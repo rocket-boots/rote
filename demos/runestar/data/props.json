@@ -3,13 +3,13 @@
 		"stairsDown": {
 			"name": "Staircase Down",
 			"character": ">",
-			"color": "#ccc",
+			"color": "#eee",
 			"stairLink": "stairsUp"
 		},
 		"stairsUp": {
 			"name": "Staircase Up",
 			"character": "<",
-			"color": "#ccc"
+			"color": "#bbb"
 		},
 		"pedestal": {
 			"name": "Pedestal",
