@@ -19,9 +19,14 @@ body {
 }
 
 h1 {
+	display: inline-block;
 	color: #777;
 	font-size: 140%;
-	padding-right: 120px;
+	padding: 0.6em;
+	margin: 0;
+}
+.subtitle {
+	opacity: 0.25;
 }
 
 canvas {
@@ -72,4 +77,11 @@ canvas {
 	#console ul > li {
 		display: block;
 		margin-bottom: 0.5em;
+		opacity: 0.4;
 	}
+	#console ul > li:last-child {
+		opacity: 1.0;
+	}
+	#console ul > li:nth-last-child(2) { opacity: 0.7; }
+	#console ul > li:nth-last-child(3) { opacity: 0.6; }
+	#console ul > li:nth-last-child(4) { opacity: 0.5; }
