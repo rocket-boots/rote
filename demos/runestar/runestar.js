@@ -1,5 +1,4 @@
 var g = new rote.Game({
-	rote,
 	id: 'display',
 	keyboard: 'multi-move',
 	data: {
@@ -12,7 +11,7 @@ var g = new rote.Game({
 
 function createPlayerCharacter(level) {
 	const { x, y } = level.findRandomFreeCell();
-	g.createHero({ x, y });
+	g.createHero({ x, y, name: 'Hero' });
 }
 
 function generateEnemy(level) {
@@ -20,6 +19,8 @@ function generateEnemy(level) {
 	const boss = g.createActor({ x, y, name: 'Spider', color: '#f44', character: 'S' }, level);
 	boss.setTarget(g.hero);
 	boss.act = function () {
+		if (g.getActiveLevel() !== level) { return; }
+		console.log('spider move')
 		this.setPathToTarget(level.getMap());
 		if (this.atEndOfPath(1)) {
 			this.attack();
@@ -56,6 +57,7 @@ function generateCrates(level, n = 10) {
 }
 
 function runGame () {
+	const seed = 1000;
 	// Connect to browser DOM for display
 	g.createDisplay({
 		width: 60,
@@ -70,7 +72,7 @@ function runGame () {
 		{ levelTypeKey: 'dungeon', repeat: 7 },
 		'docks',
 		'gizmo',
-	]);
+	], seed);
 	const topLevel = g.levels[0];
 	// Create pcs, npcs, items
 	createPlayerCharacter(topLevel);
@@ -78,7 +80,7 @@ function runGame () {
 	generateCrates(topLevel, 10);
 	// Start the game
 	g.start();
-	g.print('Move with your favorite movement keys, open crates with Enter, and avoid the Spider.');
+	g.print('Move with your favorite movement keys, use things with Enter, and avoid the Spider.');
 	console.log('The Game:', g);
 
 }

@@ -2,16 +2,20 @@ const Inventory = require('./Inventory');
 
 class Item {
 	constructor(options = {}) {
+		this.type = options.type || null;
 		this.name = options.name || 'nothing';
 		this.x = options.x || 0;
 		this.y = options.y || 0;
 		this.character = options.character || '^';
 		this.color = options.color || '#05f';
+		this.background = options.background || null;
 		this.inventory = new Inventory({
 			size: options.inventorySize || 0
 		});
 		this.containedIn = null;
 		this.actions = { ...options.on };
+		this.states = options.states || {};
+		this.teleport = null; // can this item move the character to another level, cell
 	}
 
 	action(actionName, who) {
@@ -26,7 +30,7 @@ class Item {
 		if (this.containedIn || !inView) { // Not visible if in a container
 			return false;
 		}
-		display.draw(this.x, this.y, this.character, this.color);
+		display.draw(this.x, this.y, this.character, this.color, this.background);
 		return true;
 	}
 
@@ -52,6 +56,16 @@ class Item {
 
 	contains(itemName) {
 		return this.inventory.contains(itemName);
+	}
+
+	hasAction(verb) {
+		return Boolean(this.actions[verb]);
+	}
+
+	setTeleport(options = {}) {
+		const { levelIndex, x, y, verb } = options;
+		this.teleport = { levelIndex, x, y };
+		this.actions[verb] = 'teleport';
 	}
 }
 

@@ -4,17 +4,21 @@ const geometer = require('./geometer');
 
 class Map {
 	constructor(options = {}) {
+		this.baseSeed = options.seed || 1;
+		this.seed = this.baseSeed;
 		this.type = options.type || 'digger';
 		this.rotMap = options.rotMap;
 		this.cells = {};
 		this.freeCells = [];
+		this.walls = options.walls || true;
+		this.wallsCharacter = options.wallsCharacter || '#';
 		this.generate(options);
 	}
 
-	generate(options) {
-		options = { type: 'digger', ...options };
+	generate() {
 		this.cells = {};
 		// TODO: allow different types
+		ROT.RNG.setSeed(this.seed);
 		this.rotMap = new ROT.Map.Digger();
 		this.freeCells.length = 0;
 		
@@ -26,14 +30,11 @@ class Map {
 			this.freeCells.push(key);
 		});
 
-		if (options.walls) {
+		if (this.walls) {
 			this.addWalls();
 		}
-
-		// TODO:
-		// Deal with options.stairs (string), options.stairsUp, options.stairsDown
 		
-		console.log(this);
+		// console.log(this);
 	}
 
 	addWalls() {
@@ -43,7 +44,7 @@ class Map {
 				const newY = y + dirY;
 				const wallCell = this.getCellAt(newX, newY);
 				if (!wallCell) {
-					this.setCharacterAt('#', newX, newY);
+					this.setCharacterAt(this.wallsCharacter, newX, newY);
 				}
 			});
 		});
@@ -108,13 +109,18 @@ class Map {
 	}
 
 	getRandomFreeCell() {
+		// this.seed += 1;
+		// ROT.RNG.setSeed(this.seed);
 		const i = Math.floor(ROT.RNG.getUniform() * this.freeCells.length);
+		
 		// TODO: TBD- Is it still a free cell?
 		// var key = freeCells.splice(index, 1)[0];
 		// this.map[key] = "*";
 		const key = this.freeCells[i];
 		const cell = this.cells[key];
+		
 		const { x, y } = Map.parseKeyCoordinates(key);
+		// console.log(i, key, x, y);
 		return { x, y, cell };
 	}
 

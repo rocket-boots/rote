@@ -2,19 +2,62 @@
 	"levels": {
 		"town": {
 			"name": "Town",
-			"map": { "type": "digger", "walls": true, "stairsDown": 1 }
+			"map": { "type": "digger", "walls": true },
+			"props": [
+				{ "type": "stairsDown",	"quantity": 1 },
+				{ "type": "pedestal", "quantity": 1	},
+				{ "type": "rubble",	"quantity": 10 }
+			],
+			"monsterSpawn": 1,
+			"monsters": [
+				{ "type": "r", "quantity": 2 }
+			]
 		},
 		"dungeon": {
 			"name": "Basic Dungeon Level",
-			"map": { "type": "digger", "walls": true, "stairs": "both" }
+			"map": { "type": "digger", "walls": true },
+			"props": [
+				{ "type": "stairsUp", "quantity": 1	},
+				{ "type": "stairsDown",	"quantity": 1 }
+			],
+			"monsterSpawn": "3d4",
+			"monsters": [
+				{ "type": "r", "weight": 2, "minDepth": 0 },
+				{ "type": "b", "weight": 2, "minDepth": 1 },
+				{ "type": "k", "weight": 7, "minDepth": 2 },
+				{ "type": "R", "weight": 2, "minDepth": 4 },
+				{ "type": "o", "weight": 3, "minDepth": 5 },
+				{ "type": "s", "weight": 4, "minDepth": 6 }
+			]
 		},
 		"docks": {
 			"name": "Docks (level 9)",
-			"map": { "type": "digger", "walls": true, "stairs": "both" }
+			"map": { "type": "digger", "walls": true },
+			"props": [
+				{ "type": "stairsUp", "quantity": 1	},
+				{ "type": "stairsDown",	"quantity": 1 }
+			],
+			"monsterSpawn": "3d4",
+			"monsters": [
+				{ "type": "s", "weight": 5 },
+				{ "type": "H", "weight": 5 },
+				{ "type": "G", "weight": 1 }
+			]
 		},
 		"gizmo": {
 			"name": "Gizmo Room (Final Level)",
-			"map": { "type": "digger", "walls": true, "stairsUp": 1 }
+			"map": { "type": "digger", "walls": true },
+			"stairsUp": 1,
+			"props": [
+				{ "type": "stairsUp", "quantity": 1	},
+				{ "type": "pedestal","quantity": 1 }
+			],
+			"monsterSpawn": "3d4",
+			"monsters": [
+				{ "type": "s", "weight": 8 },
+				{ "type": "H", "weight": 1 },
+				{ "type": "T", "weight": 4 }
+			]
 		}
 	}
 }

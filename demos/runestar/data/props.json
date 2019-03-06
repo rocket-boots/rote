@@ -1,9 +1,44 @@
 {
 	"props": {
+		"stairsDown": {
+			"name": "Staircase Down",
+			"character": ">",
+			"color": "#ccc",
+			"stairLink": "stairsUp"
+		},
+		"stairsUp": {
+			"name": "Staircase Up",
+			"character": "<",
+			"color": "#ccc"
+		},
 		"pedestal": {
 			"name": "Pedestal",
-			"character": "*",
+			"character": "¶", "_c": "Ī¶𐀚𐀙",
 			"color": "#f99"
+		},
+		"rubble": {
+			"name": "Rubble",
+			"character": "∴",
+			"color": "#aaa"
+		},
+		"table": {
+			"name": "Table",
+			"character": "ᚂ", "_c": "⊓",
+			"color": "#ccc"
+		},
+		"chest": {
+			"name": "Chest",
+			"character": "⊟", "_c": "⬒🛢",
+			"color": "#ccc"
+		},
+		"door": {
+			"name": "Door",
+			"character": "⍞", "_c": "◫",
+			"color": "#993"
+		},
+		"machinery": {
+			"name": "Machinery",
+			"character": "ⴼ", "_c": "ⵄⵖ"
 		}
 	}
 }

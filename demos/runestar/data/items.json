@@ -3,7 +3,13 @@
 		"axe": {
 			"name": "Axe",
 			"character": "\\",
-			"color": "#ccc"
+			"color": "#ccc",
+			"weapon": 1
+		},
+		"sunstone": {
+			"name": "Sunstone",
+			"character": "⛭", "_c": "✸✷",
+			"color": "#fc0"
 		}
 	}
 }

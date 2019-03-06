@@ -12,9 +12,17 @@ class Actor {
 		this.inventory = new Inventory({
 			size: options.inventorySize || 10
 		});
+		this.actionQueue = [];
 		this.path = [];
-		this.viewRange = 7;
+		this.viewRange = 10;
 		this.target = null;
+		// stats
+		this.hp = (options.hp || typeof options.hp === 'number') ? parseInt(options.hp, 10) : 2;
+		this.armsPoints = 0;		// ap
+		this.balancePoints = 0;		// bp
+		this.endurancePoints = 0;	// ep
+		this.focusPoints = 0;		// fp
+		this.willPoints = 0;		// wp
 	}
 
 	setPath(path) {
@@ -30,8 +38,16 @@ class Actor {
 		return true;
 	}
 
-	act() {
-		// TODO
+	queueAction(verb, params) {
+		const actionParams = { ...params, verb };
+		this.actionQueue.push(actionParams);
+	}
+
+	doAction() {
+		if (this.actionQueue.length === 0) { return null; }
+		const actionParams = this.actionQueue.shift();
+		// console.log('act', actionParams);
+		return actionParams;
 	}
 
 	attack(who) {
@@ -56,6 +72,10 @@ class Actor {
 			return;
 		}
 		const { x, y } = this.path[0];
+		this.setCoordinates(x, y);
+	}
+
+	setCoordinates(x, y) {
 		this.x = x;
 		this.y = y;
 	}

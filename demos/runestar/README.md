@@ -4,6 +4,8 @@ Based on the _Dwarves-in-Space_ setting from the [Runestar micro-RPG](http://dea
 
 This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, and will include many modifications to the rote-js libraries along the way.
 
+* Play it: https://rocket-boots.github.io/rote/demos/runestar/
+
 ## Planned Features for 7DRL
 
 ### Minimal Features for a "Game" (Essentials)
@@ -11,13 +13,15 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 #### Dungeon
 
 - [x] Data-based level configuration
-- [ ] Stairs, ability to go down
-- [ ] Game seed that is used to make multiple levels with different layouts
-- [ ] 10 Levels
+- [x] Stairs
+- [x] Ability to go down
+- [x] Game seed that is used to make multiple levels with different layouts
+- [x] 10 Levels
 
 #### Monsters
 
-- [ ] Random monsters
+- [x] monster data
+- [ ] Random monster generation based on data
 - [ ] Enemy move-to based on sight range / path range
 
 #### Basic Combat
@@ -30,7 +34,7 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 #### Sunstone
 
 - [ ] Sunstone item
-- [ ] Pedestal prop/item
+- [x] Pedestal prop/item
 - [ ] Ability to pick up items
 - [ ] Ability to drop item on adjacent cells
 - [ ] End-game trigger
@@ -84,9 +88,11 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 
 - [ ] Lighting / visibility range based on sunstone
 - [ ] When player dies, the sunstone is dropped and they can play a new character to pick it up
+- [ ] Use sunstone to heal HP at cost of energy, decreasing it's brightness
 
 #### Extra Combat
 
+- [ ] Monster wandering
 - [ ] Wounds for when out of HP
 - [ ] Ranged weaponry
 - [ ] Fleeing AI

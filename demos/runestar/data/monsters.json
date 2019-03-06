@@ -1,14 +1,56 @@
 {
 	"monsters": {
+		"r": {
+			"name": "rat",
+			"character": "r", "altCharacters": "🐀",
+			"color": "#552",
+			"hp": 2
+		},
+		"b": {
+			"name": "bat",
+			"character": "b", "_c": "🦇",
+			"color": "#525",
+			"hp": 2
+		},
 		"k": {
 			"name": "kobold", "plural": "kobolds",
 			"character": "k", "color": "#6f9",
 			"hp": 2
 		},
+		"R": {
+			"name": "ratman", "plural": "ratmen",
+			"character": "R",
+			"color": "#663"
+		},
+		"o": {
+			"name": "orc",
+			"character": "orc",
+			"color": "#5f5",
+			"hp": 4
+		},
 		"s": {
 			"name": "spider", "plural": "spiders",
-			"character": "s", "color": "#c0f",
-			"hp": 2
+			"character": "s", "altCharacters": "🕷",
+			"color": "#c0f",
+			"hp": 4
+		},
+		"H": {
+			"name": "hexaman", "plural": "hexamen",
+			"character": "H",
+			"color": "#66f",
+			"hp": 6
+		},
+		"G": {
+			"name": "golem",
+			"character": "G",
+			"color": "#655",
+			"hp": 8
+		},
+		"T": {
+			"name": "tentaclor",
+			"character": "T",
+			"color": "#3fc",
+			"hp": 10
 		}
 	}
 }
