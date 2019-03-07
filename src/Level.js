@@ -3,20 +3,21 @@ const Actor = require('./Actor');
 const Item = require('./Item');
 const Prop = require('./Prop');
 const geometer = require('./geometer');
+const random = require('./random');
 
 class Level {
 	constructor(options = {}, refData = {}) {
+		console.log('Creating Level', options.name, options.levelIndex);
 		this.seed = options.seed || 1;
 		this.name = options.name || '';
 		this.levelIndex = options.levelIndex || 0;
 		this.background = '#222';
 		const mapOptions = { ...options.map, seed: this.seed };
 		this.map = new Map(mapOptions);
-		this.actors = this.generateActors(options, refData.actors);
+		this.actors = this.generateActors(options, refData);
 		this.items = this.generateItems(options, refData.items);
 		this.props = this.generateProps(options, refData.props);
-		this.eye = { x: 0, y: 0, viewRange: 7 };
-		
+		this.eye = { x: 0, y: 0, sightRange: 7 };
 	}
 
 	draw(display) {
@@ -63,11 +64,15 @@ class Level {
 
 	isInView(x, y) { // TODO: optimize
 		const r = geometer.getDistance(this.eye.x, this.eye.y, x, y); // TODO: allow more complicated POV
-		return (r <= this.eye.viewRange);		
+		return (r <= this.eye.sightRange);		
 	}
 
 	addItem(item) {
 		this.items.push(item);
+	}
+
+	removeItem(item) {
+		return this.removeThing('items', item);
 	}
 
 	addActor(actor) {
@@ -75,19 +80,22 @@ class Level {
 	}
 
 	removeActor(actor) {
-		const i = this.actors.findIndex((a) => { return a === actor; });
+		return this.removeThing('actors', actor);
+	}
+
+	removeThing(property, thing) {
+		const i = this[property].findIndex((a) => { return a === thing; });
 		if (i <= -1) {
-			console.warn('no actor found');
+			console.warn('nothing found in', property);
 			return;
 		}
-		const arr = this.actors.splice(i, 1);
-		return arr[0];
-
+		const arr = this[property].splice(i, 1);
+		return arr[0];		
 	}
 
 	findItem(x, y) {
-		const foundItems = this.findItems(x, y);
-		return (foundItems.length) ? foundItems[0] : null;
+		const foundThings = this.findItems(x, y);
+		return (foundThings.length) ? foundThings[0] : null;
 		// let i = this.items.length - 1;
 		// while (i >= 0) {
 		// 	const item = this.items[i];
@@ -105,14 +113,40 @@ class Level {
 		});
 	}
 
-	findProps(x, y) {
-		return this.props.filter((prop) => {
-			return prop.x === x && prop.y === y;
-		});
+	findProp(x, y) {
+		const foundThings = this.findProps(x, y);
+		return (foundThings.length) ? foundThings[0] : null;
 	}
 
-	findRandomFreeCell() {
-		return this.map.getRandomFreeCell();
+	findProps(x, y) {
+		return this.props.filter((prop) => { return prop.x === x && prop.y === y; });
+	}
+
+	findActor(x, y) {
+		const foundThings = this.findActors(x, y);
+		return (foundThings.length) ? foundThings[0] : null;
+	}
+
+	findActors(x, y) {
+		return this.actors.filter((actor) => { return actor.x === x && actor.y === y; });
+	}
+
+	findRandomFreeCell(seed, clearing, retries = 10) {
+		let cell = this.map.getRandomFreeCell();
+		if (!retries) {
+			return cell;
+		}
+		console.log(retries, clearing);
+		// TODO: take into account props, actors ...?
+		if (this.findMapClearing(cell.x, cell.y) >= clearing) {
+			cell = this.findRandomFreeCell(see, clearing, (retries - 1));
+		}
+		return cell;
+	}
+
+	findMapClearing(x, y) {
+		// TODO: loop
+		return 0;
 	}
 
 	discoverCircle(x, y, radius) {
@@ -122,61 +156,108 @@ class Level {
 	// Generation
 
 	generateItems(options = {}, itemTypes = {}) {
-		const items = [];
-		return items;
+		let seed = this.seed + 200;
+		let { items = [] } = options;
+
+		const arr = [];
+		items.forEach((levelItem) => {
+			const quantity = levelItem.quantity || 1;
+			// TODO: handle weight, etc.
+			for (let i = 0; i < quantity; i++) {
+				const { x, y } = this.findRandomFreeCell(++seed, levelItem.clearing);
+				const itemTypeOptions = (levelItem.type && itemTypes[levelItem.type]) ? itemTypes[levelItem.type] : {};
+				const itemOptions = {
+					x, y,
+					...itemTypeOptions,
+					...levelItem
+				};
+				const item = new Item(itemOptions);
+				arr.push(item);
+			}
+		});
+		return arr;
 	}
 
 	generateProps(options = {}, propTypes = {}) {
-		// const STAIRS_UP_PROP_TYPE_KEY = 'stairsUp';
-		// const STAIRS_DOWN_PROP_TYPE_KEY = 'stairsDown';
-		let { stairs, stairsUp = 0, stairsDown = 0, props = [] } = options;
+		let seed = this.seed + 100;
+		let { props = [] } = options;
 		const background = this.background;
-		
-		// if (stairs === 'both') {
-		// 	stairsUp += 1;
-		// 	stairsDown += 1;
-		// }
-		const arr = [];
-		// let i;
-		// for (i = 0; i < stairsUp; i++) {
-		// 	const { x, y } = this.findRandomFreeCell();
-		// 	const propOptions = { x, y, ...propTypes[STAIRS_UP_PROP_TYPE_KEY] };
-		// 	const prop = new Prop(propOptions);
-		// 	arr.push(prop);
-		// }
-		// for (i = 0; i < stairsDown; i++) {
-		// 	const { x, y } = this.findRandomFreeCell();
-		// 	const propOptions = { x, y, ...propTypes[STAIRS_DOWN_PROP_TYPE_KEY] };
-		// 	const prop = new Prop(propOptions);
-		// 	arr.push(prop);
-		// }
 
-		props.forEach((propOptions) => {
-			const quantity = propOptions.quantity || 1;
-			// console.log(propOptions);
+		const arr = [];
+		props.forEach((levelProp) => {
+			const quantity = levelProp.quantity || 1;
+			// console.log(levelProp);
 			// TODO: handle weight, etc.
 			for (let i = 0; i < quantity; i++) {
-				const { x, y } = this.findRandomFreeCell();
-				const propTypeOptions = (propOptions.type && propTypes[propOptions.type]) ? propTypes[propOptions.type] : {};
+				const { x, y } = this.findRandomFreeCell(++seed, levelProp.clearing);
+				const propTypeOptions = (levelProp.type && propTypes[levelProp.type]) ? propTypes[levelProp.type] : {};
 				const propOptionsParam = {
 					x, y, background,
 					...propTypeOptions,
-					...propOptions
+					...levelProp
 				};
 				const prop = new Prop(propOptionsParam);
 				arr.push(prop);
 			}
 		});
-
 		// console.log('generateProps', arr);
-		
 		this.props = arr;
 		return this.props;
 	}
 
-	generateActors(options = {}, actorTypes = {}) {
+	generateActors(options = {}, refData = {}) {
+		let seed = this.seed + 999;
+		const { monsterSpawn, monsters } = options;
+		const monsterTypes = refData.monsters;
+		const depth = options.levelIndex;
+		const availableMonsters = monsters.filter((levelMonster) => {
+			return (!levelMonster.minDepth) || levelMonster.minDepth <= depth;
+		});
+		const availableMonsterWeights = {};
+		availableMonsters.forEach((levelMonster) => {
+			if (levelMonster.weight) {
+				availableMonsterWeights[levelMonster.type] = levelMonster.weight;
+			}
+		});
+		const hasMonstersWithWeights = Object.keys(availableMonsterWeights).length > 0;
+		const totalMonsterSpawnQuantity = 10; // TODO: parse monsterSpawn into random number
 		const actors = [];
+		// Create monsters with fixed quantities
+		// Note: this could exceed the total quantity
+		const availableMonstersFixedQuantities = availableMonsters.filter((levelMonster) => {
+			return levelMonster.quantity;
+		});
+		availableMonstersFixedQuantities.forEach((levelMonster) => {
+			const monsterTypeKey = levelMonster.type;
+			for (let i = 0; i < levelMonster.quantity; i++) {
+				const monster = this.createActor(monsterTypes, monsterTypeKey, ++seed);
+				actors.push(monster);
+			}
+		});
+		// Create weighted monsters
+		if (hasMonstersWithWeights) {
+			let stopper = 0;
+			while (actors.length < totalMonsterSpawnQuantity && stopper < 9000) {
+				stopper++;
+				(() => {
+					const monsterTypeKey = random.getWeightedValue(availableMonsterWeights);
+					if (!monsterTypeKey) { return; }
+					const monster = this.createActor(monsterTypes, monsterTypeKey, ++seed);
+					actors.push(monster);
+				})();
+			}
+		}
+		console.log('Actors at depth', depth, actors);
 		return actors;
+	}
+
+	createActor(monsterTypes, monsterTypeKey, seed) {
+		if (!monsterTypeKey) { return; }
+		const { x, y } = this.findRandomFreeCell(seed);
+		let monsterOptions = monsterTypes[monsterTypeKey];
+		monsterOptions = { type: monsterTypeKey, aggro: 100, ...monsterOptions, x, y };
+		// console.log(monsterTypes, monsterTypeKey, monsterOptions);
+		return new Actor(monsterOptions);		
 	}
 
 	// Gets
@@ -185,12 +266,21 @@ class Level {
 		return this.map;
 	}
 
+	getCellPassability(x, y) {
+		const isMapPassable = this.map.getCellPassability(x, y);
+		if (!isMapPassable) { return false; }
+		const actorsHere = this.actors.filter((actor) => {
+			return actor.x === x && actor.y === y && !actor.passable;
+		});
+		return (actorsHere.length === 0);
+	}
+
 	// Sets
 
 	setEye(actorThing) {
 		this.eye.x = actorThing.x;
 		this.eye.y = actorThing.y;
-		this.eye.viewRange = actorThing.viewRange;
+		this.eye.sightRange = actorThing.sightRange;
 	}
 }
 

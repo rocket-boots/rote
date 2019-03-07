@@ -60,6 +60,7 @@ canvas {
 	border: solid 1px rgba(255, 255, 255, 0.1);
 	flex-grow: 1;
 	padding: 1em;
+	padding-bottom: 2em;
 	box-sizing: border-box;
 	overflow-y: scroll;
 	scrollbar-width: none; /* Firefox */

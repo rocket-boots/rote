@@ -21,23 +21,26 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 #### Monsters
 
 - [x] monster data
-- [ ] Random monster generation based on data
-- [ ] Enemy move-to based on sight range / path range
+- [x] Random monster generation based on data
+- [x] Enemy move-to based on sight range / path range
+- [x] Stop actors from occupying the same space
 
 #### Basic Combat
 
-- [ ] Hit points
-- [ ] Death check for actors
-- [ ] Simple Bump combat (-1 HP per bump)
-- [ ] Wait with space or \`/~
+- [x] Hit points
+- [x] Death check for actors
+- [x] Simple Bump combat (-1 HP per bump)
+- [x] Wait with space or \`/~
+- [x] Passable corpses
 
 #### Sunstone
 
-- [ ] Sunstone item
+- [x] Sunstone item (data)
 - [x] Pedestal prop/item
+- [x] Item generation for level
 - [ ] Ability to pick up items
 - [ ] Ability to drop item on adjacent cells
-- [ ] End-game trigger
+- [ ] End-game trigger when placing item
 - [ ] Intro text to explain plot
 
 ### Desired Wishlist (Things that will make the game more complete)
@@ -78,10 +81,11 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 - [ ] Win / End of game screen
 - [ ] Death screen
 - [ ] Character sheet
+- [ ] Menu button and options, including links
 
 #### Leveling
 
-- [ ] Ability to go up stairs
+- [x] Ability to go up stairs
 - [ ] "Level up" - gain +1 point and a new action for each level that is explored
 
 #### Replayability
@@ -92,16 +96,19 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 
 #### Extra Combat
 
-- [ ] Monster wandering
-- [ ] Wounds for when out of HP
+- [x] Handle pushing past if on same faction moving past
+- [ ] Fix pushing past; allow pushes based on relative size and relative authority if in the same faction
+- [x] Monster wandering
+- [ ] Wound effects for when out of HP
 - [ ] Ranged weaponry
 - [ ] Fleeing AI
+- [ ] Higher miss chance attacking diagnol?
 
 #### Dungeon
 
-- [ ] Different level generation for more uniqueness
+- [ ] Different leve map generation for more uniqueness
 - [ ] Escape ship - fixed map element added onto level 9 or 10
-- [ ] Starting level ("Town") - fully explored
+- [ ] Starting level ("Town") - partially explored
 - [ ] Tutorital / practice area of starting level
 
 #### Story

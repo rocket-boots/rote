@@ -51,6 +51,10 @@ class Game {
 			this.actorAddDefaultAction(this.hero);
 			this.advance();
 		});
+		this.keyboard.on(MAIN_GAME_STATE, 'SPACE', () => {
+			this.hero.queueAction('wait');
+			this.advance();
+		});
 		// this.keyboard.start();
 		console.log(this.keyboard);
 	}
@@ -75,9 +79,9 @@ class Game {
 		}
 	}
 
-	createLevel(options = {}, seed, i) {
+	createLevel(options = {}, seed) {
 		options.seed = seed || options.seed;
-		const levelOptions = { ...options, levelIndex: i };
+		const levelOptions = { ...options, levelIndex: this.levels.length };
 		const level = new Level(levelOptions, this.data);
 		this.levels.push(level);
 		return level;
@@ -88,7 +92,7 @@ class Game {
 		arr.forEach((item, i) => {
 			seed += i;
 			if (typeof item === 'string') { // level type key
-				this.createLevel(this.getLevelType(item), seed, i);
+				this.createLevel(this.getLevelType(item), seed);
 			} else if (typeof item === 'object' && item !== null) {
 				const n = (typeof item.repeat === 'number') ? item.repeat : 1;
 				for (let r = 0; r < n; r++) {
@@ -121,7 +125,8 @@ class Game {
 	}
 
 	createHero(options = {}) {
-		this.hero = this.createActor(options, true);
+		const heroOptions = { ...options, character: '@', isHero: true };
+		this.hero = this.createActor(heroOptions, true);
 
 		const g = this;
 		// Setup action stuff ... this needs to be refactored
@@ -139,7 +144,7 @@ class Game {
 		this.discoverAroundHero();
 		return this.hero;
 	}
-	
+
 	connectStairs() {
 		const STAIR_LINK = 'stairLink';
 		const propTypes = this.getDataPropArray();
@@ -177,32 +182,55 @@ class Game {
 		});
 	}
 
-	moveHero(direction) {
-		const { x, y, moved } = this.moveActor(this.hero, direction);
-		if (!moved) {
-			return;
-		}
-		this.discoverAroundHero();
-		this.narrateAroundHero();
-		this.draw(); // TODO: make more efficient than drawing twice
-	}
-
-	moveActor(actor, direction) {
+	moveActor(actor, direction, bumpCombat = false) {
 		const diff = ROT.DIRS[8][direction];
 		var newX = actor.x + diff[0];
 		var newY = actor.y + diff[1];
+		return this.moveActorTo(actor, newX, newY, bumpCombat);
+	}
 
-		const canMoveToCell = this.getActiveLevel().map.getCellPassability(newX, newY);
-		// console.log('considering moving', diff[0], diff[1], 'to', newX, newY, '... free?', canMoveToCell);
+	moveActorTo(actor, x, y, bumpCombat = false) {
+		const level = this.getActiveLevel();
+		const canMoveToCell = level.getCellPassability(x, y);
+		// console.log('considering moving to', x, y, '... free?', canMoveToCell);
 		if (!canMoveToCell) {
-			return { x: newX, y: newY, moved: false };
+			const blocker = level.findActor(x, y);
+			if (blocker) {
+				return this.bump(actor, blocker, x, y, bumpCombat);
+			}
+			return { x: x, y: y, moved: false };
 		}
-
-		// Do the move
-		actor.move(diff[0], diff[1]);
-		// TODO: just redraw the space that was under the hero and the hero in his new spot?
+		actor.moveTo(x, y);
+		// TODO: just redraw the space that was under the actor and the actor in the new spot?
+		if (actor.isHero) {
+			this.discoverAroundHero();
+			this.narrateAroundHero();
+		}
 		this.draw();
-		return { x: newX, y: newY, moved: true };
+		return { x, y, moved: true };
+	}
+
+	bump(actor, blocker, x, y, bumpCombat) {
+		if (bumpCombat && actor.faction !== blocker.faction) {
+			this.resolveCombat(actor, blocker, x, y);
+			return { x, y, moved: false };
+		} else if (Game.canBumpSwitch(actor, blocker)) {
+			actor.moveTo(x, y);
+			return { x, y, moved: true };
+			// TODO: allow pushes based on authority
+		} else { // just blocked
+			return { x, y, moved: false };
+		}		
+	}
+
+	static canBumpSwitch(actor, blocker) {
+		const blockersNextAction = blocker.getNextAction();
+		if (!blockersNextAction) { return true; }
+		return (
+			blockersNextAction.verb === 'move' &&
+			blockersNextAction.x === actor.x &&
+			blockersNextAction.y === actor.y
+		);
 	}
 
 	teleportActor(actor, teleportParams = {}) {
@@ -215,7 +243,23 @@ class Game {
 		newLevel.addActor(actor);
 		actor.setCoordinates(x, y);
 		console.log('New Level:', newLevel);
+		if (actor.isHero) {
+			this.discoverAroundHero();
+			this.narrateAroundHero();
+		}
 		// this.draw();
+	}
+
+	resolveCombat(actor, opponent, x, y) {
+		if (!actor || !opponent || actor.faction === opponent.faction) {
+			return false;
+		}
+		const damage = 1;
+		opponent.wound(damage);
+		g.print(`${actor.name} attacks ${opponent.name} and does ${damage} damage!`);
+		if (opponent.dead()) {
+			g.print(`${opponent.name} has been killed.`);
+		}
 	}
 
 	actorAddDefaultAction(actor) {
@@ -230,12 +274,14 @@ class Game {
 		} else if (thing.hasAction('descend') || thing.hasAction('ascend')) {
 			actor.queueAction('teleport', { teleport: thing.teleport });
 			console.log('Planning to teleport...', actor.actionQueue);
+		} else if (thing.portable) {
+			actor.queueAction('pickup', { target: thing });
 		}
 	}
 
 	discoverAroundHero() {
 		const level = this.getActiveLevel();
-		level.discoverCircle(this.hero.x, this.hero.y, this.hero.viewRange); // TODO: allow different POV
+		level.discoverCircle(this.hero.x, this.hero.y, this.hero.sightRange); // TODO: allow different POV
 		level.setEye(this.hero);
 	}
 
@@ -243,7 +289,7 @@ class Game {
 		const allThingsOnHero = this.getThingsOnActor(this.hero);
 		if (allThingsOnHero.length === 0) { return; }
 		const namesOnHero = allThingsOnHero.map((thing) => thing.name);
-		const namesString = namesOnHero.join(', ');
+		const namesString = (namesOnHero.length > 1) ? namesOnHero.join(', ') : 'a ' + namesOnHero[0];
 		this.console.print(`You are on ${namesString}.`);
 	}
 
@@ -277,7 +323,12 @@ class Game {
 	advance() {
 		// TODO: advance time
 		// TODO: Do actions for all actors
-		this.advanceActor(this.hero);
+		const level = this.getActiveLevel();
+		level.actors.forEach((actor) => {
+			actor.planAction(level, this.hero);
+			this.advanceActor(actor);
+		});
+		// this.advanceActor(this.hero);
 		this.draw();
 	}
 
@@ -285,18 +336,44 @@ class Game {
 		const action = actor.doAction();
 		if (!action) { return; }
 		const { verb, target } = action;
-		switch(verb) {
+		if (actor.isHero) {
+			console.log(actor.name, verb, action);
+		}
+		switch (verb) {
 			case 'move':
-				this.moveHero(action.direction);
+				const bumpCombat = (actor.isHero || actor.aggro > 0);
+				if (action.direction === undefined) {
+					this.moveActorTo(actor, action.x, action.y, bumpCombat);
+				} else {
+					this.moveActor(actor, action.direction, bumpCombat);
+				}
 			break;
 			case 'open':
 				target.action('open', actor);
 			break;
 			case 'teleport':
-				this.console.print(`${actor.name} travels to a new location...`);
+				this.print(`${actor.name} travels to a new location...`);
 				this.teleportActor(actor, action.teleport);
 			break;
+			case 'pickup':
+				const pickedUp = this.pickupItem(actor, target);
+				if (pickedUp) {
+					this.print(`${actor.name} picks up the ${target.name}.`);
+				}
+			break;
 		}
+	}
+
+	pickupItem(actor, thing) {
+		if (!thing.portable) { return false; }
+		const level = this.getActiveLevel();
+		const item = level.removeItem(thing);
+		if (!item) { return false; }
+		const added = actor.inventory.add(thing);
+		if (!added) {
+			level.addItem(item);
+		}
+		return added;
 	}
 
 	loadData(data) {
@@ -345,7 +422,7 @@ class Game {
 		const propsOnHero = level.findProps(actor.x, actor.y);
 		const itemsOnHero = level.findItems(actor.x, actor.y);
 		const allThingsOnHero = propsOnHero.concat(itemsOnHero);
-		return allThingsOnHero;		
+		return allThingsOnHero;
 	}
 
 	//---- Sets

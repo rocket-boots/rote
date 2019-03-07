@@ -8,8 +8,9 @@
 		},
 		"sunstone": {
 			"name": "Sunstone",
-			"character": "⛭", "_c": "✸✷",
-			"color": "#fc0"
+			"character": "✷", "_c": "⛭✸✷",
+			"color": "#fc0",
+			"clearing": 2
 		}
 	}
 }

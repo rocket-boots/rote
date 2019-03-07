@@ -1,6 +1,7 @@
 const ROT = require('rot-js');
 const Cell = require('./Cell');
 const geometer = require('./geometer');
+const random = require('./random');
 
 class Map {
 	constructor(options = {}) {
@@ -108,10 +109,8 @@ class Map {
 		}
 	}
 
-	getRandomFreeCell() {
-		// this.seed += 1;
-		// ROT.RNG.setSeed(this.seed);
-		const i = Math.floor(ROT.RNG.getUniform() * this.freeCells.length);
+	getRandomFreeCell(seed) {		
+		const i = random.roll(this.freeCells.length, seed);
 		
 		// TODO: TBD- Is it still a free cell?
 		// var key = freeCells.splice(index, 1)[0];
@@ -120,7 +119,7 @@ class Map {
 		const cell = this.cells[key];
 		
 		const { x, y } = Map.parseKeyCoordinates(key);
-		// console.log(i, key, x, y);
+		// console.log(seed, key, i, x, y);
 		return { x, y, cell };
 	}
 

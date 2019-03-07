@@ -8,9 +8,15 @@
 				{ "type": "pedestal", "quantity": 1	},
 				{ "type": "rubble",	"quantity": 10 }
 			],
-			"monsterSpawn": 1,
+			"monsterSpawn": 8,
 			"monsters": [
-				{ "type": "r", "quantity": 2 }
+				{ "type": "dwarf", "weight": 1 },
+				{ "type": "r", "quantity": 2 },
+				{ "type": "b", "quantity": 0 }
+			],
+			"items": [
+				{ "type": "sunstone", "quantity": 1 },
+				{ "type": "axe", "quantity": 1 }
 			]
 		},
 		"dungeon": {

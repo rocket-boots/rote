@@ -1,10 +1,19 @@
 {
 	"monsters": {
+		"dwarf": {
+			"name": "dwarf",
+			"character": "h",
+			"color": "#6f4",
+			"hp": 6,
+			"aggro": 0,
+			"faction": "kith"
+		},
 		"r": {
 			"name": "rat",
 			"character": "r", "altCharacters": "🐀",
 			"color": "#552",
-			"hp": 2
+			"hp": 2,
+			"aggro": 0
 		},
 		"b": {
 			"name": "bat",

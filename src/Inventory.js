@@ -12,6 +12,9 @@ class Inventory {
 		if (this.isFull()) {
 			return false;
 		}
+		if (!item.portable) {
+			return false;
+		}
 		this.items.push(item);
 		return true;
 	}
