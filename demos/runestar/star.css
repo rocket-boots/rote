@@ -1,7 +1,7 @@
 html, body {
 	margin: 0;
 	padding: 0;
-	background: #000;
+	background: #080600;
 	color: #ddd;
 	font-family: 'AppleII', monospace;
 	width: 100%;
@@ -86,3 +86,10 @@ canvas {
 	#console ul > li:nth-last-child(2) { opacity: 0.7; }
 	#console ul > li:nth-last-child(3) { opacity: 0.6; }
 	#console ul > li:nth-last-child(4) { opacity: 0.5; }
+
+.plot {
+	color: #ee9;
+}
+.tip {
+	color: #0ff;
+}

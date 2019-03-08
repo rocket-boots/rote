@@ -12,7 +12,7 @@ class Map {
 		this.cells = {};
 		this.freeCells = [];
 		this.walls = options.walls || true;
-		this.wallsCharacter = options.wallsCharacter || '#';
+		this.wallsCharacter = options.wallsCharacter || '#'; // ▧
 		this.generate(options);
 	}
 

@@ -106,7 +106,6 @@ class Level {
 		// }
 		// return null;
 	}
-
 	findItems(x, y) {
 		return this.items.filter((item) => {
 			return item.x === x && item.y === y && !item.containedIn;
@@ -117,18 +116,21 @@ class Level {
 		const foundThings = this.findProps(x, y);
 		return (foundThings.length) ? foundThings[0] : null;
 	}
-
 	findProps(x, y) {
 		return this.props.filter((prop) => { return prop.x === x && prop.y === y; });
+	}
+	findPropsByType(type) {
+		return this.props.filter((prop) => { return prop.type === type; });
 	}
 
 	findActor(x, y) {
 		const foundThings = this.findActors(x, y);
 		return (foundThings.length) ? foundThings[0] : null;
 	}
-
 	findActors(x, y) {
-		return this.actors.filter((actor) => { return actor.x === x && actor.y === y; });
+		return this.actors.filter((actor) => {
+			return actor.x === x && actor.y === y && !actor.dead();
+		});
 	}
 
 	findRandomFreeCell(seed, clearing, retries = 10) {

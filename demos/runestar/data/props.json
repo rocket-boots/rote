@@ -11,6 +11,21 @@
 			"character": "<",
 			"color": "#bbb"
 		},
+		"alembic": {
+			"name": "alembic",
+			"character": "⚗",
+			"color": "#f99"
+		},
+		"dirt": {
+			"name": "dirt",
+			"character": ".",
+			"color": "#440"
+		},
+		"grass": {
+			"name": "grass",
+			"character": "\"",
+			"color": "#4c4"
+		},
 		"pedestal": {
 			"name": "Pedestal",
 			"character": "¶", "_c": "Ī¶𐀚𐀙",
@@ -23,22 +38,56 @@
 		},
 		"table": {
 			"name": "Table",
-			"character": "ᚂ", "_c": "⊓",
-			"color": "#ccc"
+			"character": "⊓", "_c": "⊓ᚂ",
+			"color": "#ccb"
+		},
+		"chair": {
+			"name": "chair",
+			"character": "⑁",
+			"color": "#ccb"
 		},
 		"chest": {
 			"name": "Chest",
-			"character": "⊟", "_c": "⬒🛢",
-			"color": "#ccc"
+			"character": "⊟", "_c": "⍞⬒🛢",
+			"color": "#993"
 		},
 		"door": {
 			"name": "Door",
-			"character": "⍞", "_c": "◫",
-			"color": "#993"
+			"character": "+", "_c": "◫",
+			"color": "#b93"
+		},
+		"extractor": {
+			"name": "extractor",
+			"character": "⌼",
+			"surrounding": ["ⵖ", "⊣", "⋑", "⊣", "⏚", "⊢", "⋐", "⊢"],
+			"color": "#f99"
+		},
+		"extractorSwitch": {
+			"name": "extractor switch",
+			"character": "⍎",
+			"color": "#fa8"
+		},
+		"lamp": {
+			"name": "lamp",
+			"character": "⍝",
+			"color": "#ffc",
+			"illumination": 2
 		},
 		"machinery": {
 			"name": "Machinery",
-			"character": "ⴼ", "_c": "ⵄⵖ"
+			"character": "ⴼ", "_c": "ⵄⵖ",
+			"color": "#fa8"
+		},
+		"gizmo": {
+			"name": "mysterious gizmo",
+			"character": "⧮",
+			"color": "#a88",
+			"illumination": 1
+		},
+		"shelves": {
+			"name": "shelves",
+			"character": "▤",
+			"color": "#971"
 		}
 	}
 }

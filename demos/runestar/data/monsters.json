@@ -39,7 +39,7 @@
 		},
 		"s": {
 			"name": "spider", "plural": "spiders",
-			"character": "s", "altCharacters": "🕷",
+			"character": "s", "altCharacters": "🕷ⵥ",
 			"color": "#c0f",
 			"hp": 4
 		},
@@ -57,7 +57,7 @@
 		},
 		"T": {
 			"name": "tentaclor",
-			"character": "T",
+			"character": "T", "alt": "ⵥ",
 			"color": "#3fc",
 			"hp": 10
 		}

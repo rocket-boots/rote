@@ -19,6 +19,16 @@ class Inventory {
 		return true;
 	}
 
+	remove(item) {
+		const i = this.items.indexOf(item);
+		if (i <= -1) {
+			console.warn('nothing found in', this.items, item);
+			return;
+		}
+		const arr = this.items.splice(i, 1);
+		return arr[0];
+	}
+
 	get(n) {
 		if (typeof n === 'number') {
 			return this.items[n];
@@ -26,6 +36,11 @@ class Inventory {
 			return this.items.find((item) => { return item.name === n; });
 		}
 		return this.items;
+	}
+
+	getString() {
+		const arr = this.items.map((item, i) => { return `[${(i + 1)}] ${item.name}`; });
+		return (arr.length) ? arr.join(', ') : 'nothing';
 	}
 
 	hasContents() {

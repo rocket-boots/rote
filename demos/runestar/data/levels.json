@@ -2,11 +2,15 @@
 	"levels": {
 		"town": {
 			"name": "Town",
+			"description": "This floor acts as the barracks for dwarven miners and engineers",
 			"map": { "type": "digger", "walls": true },
 			"props": [
 				{ "type": "stairsDown",	"quantity": 1 },
 				{ "type": "pedestal", "quantity": 1	},
-				{ "type": "rubble",	"quantity": 10 }
+				{ "type": "shelves", "quantity": 2 },
+				{ "type": "chair", "quantity": 3 },
+				{ "type": "table", "quantity": 6 },
+				{ "type": "lamp", "quantity": 3 }
 			],
 			"monsterSpawn": 8,
 			"monsters": [
@@ -15,7 +19,7 @@
 				{ "type": "b", "quantity": 0 }
 			],
 			"items": [
-				{ "type": "sunstone", "quantity": 1 },
+				{ "type": "sunstone", "quantity": 1, "clearing": 2 },
 				{ "type": "axe", "quantity": 1 }
 			]
 		},
@@ -24,7 +28,17 @@
 			"map": { "type": "digger", "walls": true },
 			"props": [
 				{ "type": "stairsUp", "quantity": 1	},
-				{ "type": "stairsDown",	"quantity": 1 }
+				{ "type": "stairsDown",	"quantity": 1 },
+				{ "type": "rubble",	"quantity": 4 },
+				{ "type": "alembic", "quantity": 1 },
+				{ "type": "table", "quantity": 1 },
+				{ "type": "chest", "quantity": 1 },
+				{ "type": "chair", "quantity": 1 },
+				{ "type": "grass", "quantity": 3 },
+				{ "type": "dirt", "quantity": 4 },
+				{ "type": "door", "quantity": 1 },
+				{ "type": "shelves", "quantity": 1 },
+				{ "type": "lamp", "quantity": 1 }
 			],
 			"monsterSpawn": "3d4",
 			"monsters": [
@@ -38,10 +52,16 @@
 		},
 		"docks": {
 			"name": "Docks (level 9)",
+			"description": "This mysterious floor is not on any maps, and seems to be newly created. It contains a lot of new high-tech machinery.",
 			"map": { "type": "digger", "walls": true },
 			"props": [
 				{ "type": "stairsUp", "quantity": 1	},
-				{ "type": "stairsDown",	"quantity": 1 }
+				{ "type": "stairsDown",	"quantity": 1 },
+				{ "type": "table", "quantity": 1 },
+				{ "type": "shelves", "quantity": 1 },
+				{ "type": "machinery", "quantity": 10 },
+				{ "type": "gizmo", "quantity": 10 },
+				{ "type": "lamp", "quantity": 4 }
 			],
 			"monsterSpawn": "3d4",
 			"monsters": [
@@ -52,11 +72,17 @@
 		},
 		"gizmo": {
 			"name": "Gizmo Room (Final Level)",
+			"description": "This dark floor smells of death.",
 			"map": { "type": "digger", "walls": true },
 			"stairsUp": 1,
 			"props": [
 				{ "type": "stairsUp", "quantity": 1	},
-				{ "type": "pedestal","quantity": 1 }
+				{ "type": "extractor", "quantity": 1 },
+				{ "type": "extractorSwitch", "quantity": 1 },
+				{ "type": "chest", "quantity": 1 },
+				{ "type": "machinery", "quantity": 10 },
+				{ "type": "gizmo", "quantity": 10 },
+				{ "type": "lamp", "quantity": 2 }
 			],
 			"monsterSpawn": "3d4",
 			"monsters": [

@@ -18,6 +18,7 @@ class Actor {
 		this.originalCharacter = this.character;
 		this.color = options.color || '#ff0';
 		this.originalColor = this.color;
+		this.bloodColor = '#611';
 		// this.game = options.game || console.error('must tie actor to game');
 		this.inventory = new Inventory({
 			size: options.inventorySize || 10
@@ -25,16 +26,16 @@ class Actor {
 		this.passable = false;
 		this.actionQueue = [];
 		this.maxMovement = this.isHero ? 1.42 : 1;
-		this.sightRange = (typeof options.sightRange === 'number') ? options.sightRange : 7;
+		this.sightRange = (typeof options.sightRange === 'number') ? options.sightRange : 6;
 		this.target = null;
 		this.aggro = options.aggro || 0;
 		// stats
 		this.hp = (options.hp || typeof options.hp === 'number') ? parseInt(options.hp, 10) : 2;
-		this.armsPoints = 0;		// ap
-		this.balancePoints = 0;		// bp
-		this.endurancePoints = 0;	// ep
-		this.focusPoints = 0;		// fp
-		this.willPoints = 0;		// wp
+		this.armsPoints = options.armsPoints || 0;		// ap
+		this.balancePoints = options.balancePoints || 0;		// bp
+		this.endurancePoints = options.endurancePoints || 0;	// ep
+		this.focusPoints = options.focusPoints || 0;		// fp
+		this.willPoints = options.willPoints || 0;		// wp
 	}
 
 	draw(display, lighting = {}, inView = false) {
@@ -62,12 +63,12 @@ class Actor {
 			return;
 		}
 		const distanceToHero = geometer.getDistance(this.x, this.y, hero.x, hero.y);
-
+		const dangerouslyHurt = (this.hp <= 1);
 		this.act = function () {
 			console.log(`${this.name} acts`);
 			// if (g.getActiveLevel() !== level) { return; }
 		};
-		if (this.aggro && distanceToHero <= this.getMaxSenseRange() && !hero.dead()) {
+		if (this.aggro && distanceToHero <= this.getMaxSenseRange() && !hero.dead() && !dangerouslyHurt) {
 			const map = level.getMap();
 			this.clearQueue();
 			this.setTarget(hero);
@@ -152,7 +153,7 @@ class Actor {
 	checkDeath() {
 		if (this.dead()) {
 			this.character = 'X';
-			this.color = '#a11';
+			this.color = this.bloodColor;
 			this.passable = true;
 		}
 	}

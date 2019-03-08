@@ -55,6 +55,25 @@ class Game {
 			this.hero.queueAction('wait');
 			this.advance();
 		});
+		this.keyboard.on(MAIN_GAME_STATE, 't', () => {
+			this.showInventory();
+			this.print('> Throw which item?');
+			let n = prompt('Throw which item? \n\n' + this.hero.inventory.getString());
+			if (!n || n.length === 0) {
+				this.print('None');
+				return;
+			}
+			n = parseInt(n, 10);
+			const i = (isNaN(n)) ? -1 : n - 1;
+			const item = this.hero.inventory.get(i);
+			if (item) {
+				this.hero.queueAction('throw', { what: item, x: this.hero.x, y: this.hero.y });
+				this.advance();
+			} else {
+				this.print(`Invalid item [${n}]`);
+			}
+		});
+		this.keyboard.on(MAIN_GAME_STATE, 'i', () => { this.showInventory(); });
 		// this.keyboard.start();
 		console.log(this.keyboard);
 	}
@@ -68,8 +87,19 @@ class Game {
 		this.display.setupElements();
 	}
 
-	print(str) {
-		this.console.print(str);
+	//---- Draw / Render
+
+	print(str, classes = '', wait = 0) {
+		if (wait) {
+			setTimeout(() => { this.print(str, classes); }, wait);
+			return;
+		}
+		this.console.print(str, classes);
+	}
+
+	showInventory() {
+		const items = this.hero.inventory.getString();
+		this.print('Inventory: ' + items);		
 	}
 
 	draw() {
@@ -78,6 +108,8 @@ class Game {
 			this.hero.draw(this.display);
 		}
 	}
+
+	//---- Generation
 
 	createLevel(options = {}, seed) {
 		options.seed = seed || options.seed;
@@ -182,6 +214,8 @@ class Game {
 		});
 	}
 
+	//---- Movement, Combat
+
 	moveActor(actor, direction, bumpCombat = false) {
 		const diff = ROT.DIRS[8][direction];
 		var newX = actor.x + diff[0];
@@ -224,6 +258,9 @@ class Game {
 	}
 
 	static canBumpSwitch(actor, blocker) {
+		if (actor.aggro || blocker.aggro) { // TOOD: make this more nuanced
+			return false;
+		}
 		const blockersNextAction = blocker.getNextAction();
 		if (!blockersNextAction) { return true; }
 		return (
@@ -281,7 +318,10 @@ class Game {
 
 	discoverAroundHero() {
 		const level = this.getActiveLevel();
-		level.discoverCircle(this.hero.x, this.hero.y, this.hero.sightRange); // TODO: allow different POV
+		const illumination = this.hero.inventory.items.reduce((n, item) => {
+			return n + item.illumination;
+		}, 0);
+		level.discoverCircle(this.hero.x, this.hero.y, this.hero.sightRange + illumination); // TODO: allow different POV
 		level.setEye(this.hero);
 	}
 
@@ -335,7 +375,7 @@ class Game {
 	advanceActor(actor) {
 		const action = actor.doAction();
 		if (!action) { return; }
-		const { verb, target } = action;
+		const { verb, target, what, x, y } = action;
 		if (actor.isHero) {
 			console.log(actor.name, verb, action);
 		}
@@ -361,6 +401,12 @@ class Game {
 					this.print(`${actor.name} picks up the ${target.name}.`);
 				}
 			break;
+			case 'throw':
+				const thrown = this.throw(actor, what, x, y);
+				if (thrown) {
+					this.print(`${actor.name} throws down a ${what.name}.`);
+				}
+			break;
 		}
 	}
 
@@ -374,6 +420,16 @@ class Game {
 			level.addItem(item);
 		}
 		return added;
+	}
+
+	throw(actor, what, x, y) {
+		const level = this.getActiveLevel();
+		const item = actor.inventory.remove(what);
+		if (!item) { return false; }
+		item.x = (typeof x === 'number') ? x : actor.x;
+		item.y = (typeof y === 'number') ? y : actor.y;
+		level.addItem(item);
+		return true;
 	}
 
 	loadData(data) {

@@ -12,6 +12,7 @@ class Item {
 		this.inventory = new Inventory({
 			size: options.inventorySize || 0
 		});
+		this.illumination = options.illumination || 0;
 		this.portable = (typeof options.portable === 'boolean') ? options.portable : true;
 		this.containedIn = null;
 		this.actions = { ...options.on };

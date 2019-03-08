@@ -11,7 +11,9 @@ var g = new rote.Game({
 
 function createPlayerCharacter(level) {
 	const { x, y } = level.findRandomFreeCell();
-	g.createHero({ x, y, name: 'Hero', sightRange: 10, hp: 3, faction: 'kith' });
+	g.createHero({ x, y, name: 'Hero', sightRange: 6, hp: 100000, faction: 'kith' });
+	g.hero.inventory.add( new rote.Item({ name: 'Beard comb', character: "⋹" }) );
+	g.hero.inventory.add( new rote.Item({ name: 'Toga', character: "⌓" }) );
 }
 
 function openCrate(item) {
@@ -36,6 +38,11 @@ function generateCrates(level, n = 10) {
 	}
 }
 
+function setupMachinery(level) {
+	// level.findPropsByType('extractor');
+	// level.findPropsByType('extractorSwitch');
+}
+
 function runGame () {
 	const seed = 1002;
 	// Connect to browser DOM for display
@@ -53,6 +60,8 @@ function runGame () {
 		'docks',
 		'gizmo',
 	], seed);
+	const bottomLevel = g.levels[g.levels.length - 1];
+	setupMachinery(bottomLevel);
 	const topLevel = g.levels[0];
 	// Create pcs, npcs, items
 	createPlayerCharacter(topLevel);
@@ -64,8 +73,10 @@ function runGame () {
 	const stairs = topLevel.props.find((prop) => { return prop.type === 'stairsDown'; });
 	topLevel.discoverCircle(stairs.x, stairs.y, 3);
 	// Start the game
+	g.print('A mysterious, pale dwarf tells you there is a powerful sunstone on this floor that is damaged and needs to be taken to the bottom floor for safety.', 'plot');
+	g.print('He offers to pay you a large sum of gold when your quest is complete.', 'plot', 100);
+	g.print('> Move with your favorite movement keys, and use things with Enter. <', 'tip', 200);
 	g.start();
-	g.print('> Move with your favorite movement keys, and use things with Enter. <');
 	console.log('The Game:', g);
 
 }

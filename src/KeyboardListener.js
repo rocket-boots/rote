@@ -7,6 +7,7 @@ const DIRECTION8 = {
 const DIRECTION4 = { 'UP': 0, 'RIGHT': 1, 'DOWN': 2, 'LEFT': 3 };
 const DIRECTION4_ARRAY = ['UP', 'RIGHT', 'DOWN', 'LEFT'];
 
+const USED_KEYS = ['i', 't'];
 const KEY_MAP = {
 	"9":	"TAB",
 	"13":	"ENTER",
@@ -87,18 +88,19 @@ class KeyboardListener {
 
 	handleEvent(e) {
 		const keyMap = this.getKeyMap();
-		const { keyCode } = e;
-		
-		if (!(keyCode in keyMap)) {
-			console.log('handleEvent - unknown key code:', keyCode);
+		const { keyCode, key } = e;
+		const isKeyUsed = USED_KEYS.includes(key) || (keyCode in keyMap);
+
+		if (!isKeyUsed) {
+			console.log('Keyboard handleEvent - unaccounted for key:', key, keyCode);
 			return;
 		}
 		e.preventDefault();
 
 		// Lookup key name and direction
-		const keyName = keyMap[keyCode];
+		const keyName = keyMap[keyCode] || key;
 		const direction = DIRECTION8[keyName];
-		console.log('handleEvent', keyName, keyCode, direction);
+		// console.log('handleEvent', e, keyName, keyCode, direction);
 
 		// Callbacks
 		if (direction !== undefined) {
