@@ -31,6 +31,7 @@ class Actor {
 		this.aggro = options.aggro || 0;
 		// stats
 		this.hp = (options.hp || typeof options.hp === 'number') ? parseInt(options.hp, 10) : 2;
+		this.hpMax = this.hp;
 		this.armsPoints = options.armsPoints || 0;		// ap
 		this.balancePoints = options.balancePoints || 0;		// bp
 		this.endurancePoints = options.endurancePoints || 0;	// ep

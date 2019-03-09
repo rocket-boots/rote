@@ -4,6 +4,7 @@ const Item = require('./Item');
 const Prop = require('./Prop');
 const geometer = require('./geometer');
 const random = require('./random');
+const { DIRS_4, DIRS_8_DIAGNOLS } = require('./constants');
 
 class Level {
 	constructor(options = {}, refData = {}) {
@@ -133,6 +134,57 @@ class Level {
 		});
 	}
 
+	findThings(x, y) {
+		const props = this.findProps(x, y);
+		const items = this.findItems(x, y);
+		const allThings = props.concat(items);
+		return allThings;
+	}
+
+	findThingsCardinal(x, y) {
+		const props = this.findThingsByDirections('props', DIRS_4, x, y);
+		const items = this.findThingsByDirections('items', DIRS_4, x, y);
+		const allThings = props.concat(items);
+		return allThings;
+	}
+
+	findThingsDiagnol(x, y) {
+		const props = this.findThingsByDirections('props', DIRS_8_DIAGNOLS, x, y);
+		const items = this.findThingsByDirections('items', DIRS_8_DIAGNOLS, x, y);
+		const allThings = props.concat(items);
+		return allThings;
+	}
+
+	findThingsByDirections(thingName, dirs, x, y) {
+		const coords = [];
+		dirs.forEach((dir) => { coords.push({ x: x + dir.x, y: y + dir.y }); });
+		console.log(dirs);
+		return this[thingName].filter((thing) => {
+			const matches = coords.filter((xy) => {
+				return xy.x === thing.x && xy.y === thing.y && !thing.containedIn
+			});
+			return matches.length > 0;
+		});		
+	}
+
+	findThingSmart(x, y, perferredProperty) {
+		let things = this.findThings(x, y);
+		console.log('find smart - on spot', things);
+		if (!things.length) {
+			things = this.findThingsCardinal(x, y);
+			console.log('find smart - cardinal', things);
+			if (!things.length) {
+				things = this.findThingsDiagnol(x, y);
+				console.log('find smart - diagnols', things);
+			}
+		}
+		if (perferredProperty) {
+			things.sort((a, b) => { console.log(a, b, a[perferredProperty]); return b[perferredProperty]; });
+			console.log("sorted", things);
+		}
+		return things[0];
+	}
+
 	findRandomFreeCell(seed, clearing, retries = 10) {
 		let cell = this.map.getRandomFreeCell();
 		if (!retries) {
@@ -153,6 +205,23 @@ class Level {
 
 	discoverCircle(x, y, radius) {
 		return this.map.discoverCircle(x, y, radius);
+	}
+
+	// Actions
+
+	throw(actor, what, x, y) {
+		const item = actor.inventory.remove(what);
+		if (!item) { return false; }
+		item.x = (typeof x === 'number') ? x : actor.x;
+		item.y = (typeof y === 'number') ? y : actor.y;
+		const containers = this.findThings(x, y).filter((thing) => { console.log(thing); return thing.hasSpace(); });
+		if (containers.length) {
+			const container = containers[0];
+			container.addToInventory(item);
+			return `${actor.name} puts ${what.name} into the ${container.name}.`;
+		}
+		this.addItem(item);
+		return `${actor.name} throws down a ${what.name}.`;
 	}
 
 	// Generation

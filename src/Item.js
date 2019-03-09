@@ -1,4 +1,5 @@
 const Inventory = require('./Inventory');
+const { DIRS_8 } = require('./constants');
 
 class Item {
 	constructor(options = {}) {
@@ -7,6 +8,7 @@ class Item {
 		this.x = options.x || 0;
 		this.y = options.y || 0;
 		this.character = options.character || '^';
+		this.surrounding = options.surrounding || [];
 		this.color = options.color || '#05f';
 		this.background = options.background || null;
 		this.inventory = new Inventory({
@@ -15,17 +17,57 @@ class Item {
 		this.illumination = options.illumination || 0;
 		this.portable = (typeof options.portable === 'boolean') ? options.portable : true;
 		this.containedIn = null;
-		this.actions = { ...options.on };
+		this.actions = { ...options.on, ...options.actions };
+		if (options.use) {
+			this.actions.use = options.use;
+		}
 		this.states = options.states || {};
 		this.teleport = null; // can this item move the character to another level, cell
 	}
 
+	hasAction(verb) {
+		return Boolean(this.actions[verb]);
+	}
+
 	action(actionName, who) {
-		if (typeof this.actions[actionName] !== 'function') {
+		const action = this.actions[actionName];
+		let actionOutcome = {};
+		if (typeof action === 'function') {
+			actionOutcome = action(this, who);
+		} else if (typeof action === 'object' && action !== null) {
+			actionOutcome = this.runAction(action, who);
+		} else {
 			console.warn('No action', actionName, 'for item', this);
-			return;
 		}
-		this.actions[actionName](this, who);
+		return actionOutcome;
+	}
+
+	runAction(action = {}, who) { // TODO: move to game/level?
+		let message = '';
+		if (!this.requirementMet(action, who)) {
+			message = (action.missingMessage) ? action.missingMessage : `Some requirement is not met to use the ${this.name}`;
+			return { message };
+		}
+		// TODO: do the things in the action data...
+		// TODO: spawn fire
+		// TODO: end game
+		// TODO: score
+
+		message = message + ((action.message) ? action.message : '');
+		return { message };
+	}
+
+	requirementMet(action = {}, who) {
+		if (!action.requires) {
+			return true;
+		}
+		let met = 0;
+		action.requires.forEach((requirement) => {
+			if (requirement.item && this.inventory.containsType(requirement.item)) {
+				met += 1;
+			}
+		});
+		return met === action.requires.length;
 	}
 
 	draw(display, lighting = {}, inView = false) {
@@ -33,6 +75,12 @@ class Item {
 			return false;
 		}
 		display.draw(this.x, this.y, this.character, this.color, this.background);
+		if (this.surrounding.length) {
+			this.surrounding.forEach((char, i) => {
+				let { x, y } = DIRS_8[i];
+				display.draw(this.x + x, this.y + y, char, this.color, this.background);
+			});
+		}
 		return true;
 	}
 
@@ -48,6 +96,8 @@ class Item {
 		return true;
 	}
 
+	//---- Inventory
+
 	getContents(n) {
 		return this.inventory.get(n);
 	}
@@ -60,9 +110,15 @@ class Item {
 		return this.inventory.contains(itemName);
 	}
 
-	hasAction(verb) {
-		return Boolean(this.actions[verb]);
+	hasSpace() {
+		return this.inventory.hasSpace();
 	}
+
+	addToInventory(item) {
+		return this.inventory.add(item);
+	}
+
+	//---- Sets
 
 	setTeleport(options = {}) {
 		const { levelIndex, x, y, verb } = options;

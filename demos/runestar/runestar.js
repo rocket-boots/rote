@@ -11,24 +11,23 @@ var g = new rote.Game({
 
 function createPlayerCharacter(level) {
 	const { x, y } = level.findRandomFreeCell();
-	g.createHero({ x, y, name: 'Hero', sightRange: 6, hp: 100000, faction: 'kith' });
+	g.createHero({ x, y, name: 'Hero', sightRange: 6, hp: 100, faction: 'kith' });
 	g.hero.inventory.add( new rote.Item({ name: 'Beard comb', character: "⋹" }) );
 	g.hero.inventory.add( new rote.Item({ name: 'Toga', character: "⌓" }) );
 }
 
 function openCrate(item) {
-	// const hasWin = item.contains('Amulet of Winning');
 	const what = (item.hasContents()) ? item.getContents(0).name : 'nothing';
-	g.print(`The hero opens the ${item.name}, and finds ${what}.`);
+	g.print(`The hero opens the ${item.name}, and see it contains ${what}.`);
 }
 
-function generateCrates(level, n = 10) {
+function generateCrates(level, n = 2) {
 	while (n > 0) {
 		const { x, y } = level.findRandomFreeCell();
 		const on = {
-			open: openCrate
+			use: openCrate
 		};
-		const crateOptions = { x, y, on, name: 'crate', inventorySize: 1, character: '*' };
+		const crateOptions = { x, y, on, name: 'crate', inventorySize: 1, character: '*', portable: false };
 		const crate = g.createItem(crateOptions, level);
 		if (n === 1) {
 			const amulet = g.createItem({ x, y, character: '"', name: 'Amulet of Stars' }, level);

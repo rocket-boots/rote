@@ -71,8 +71,11 @@ h1 {
 	grid-area: display;
 	/* border-bottom: solid 1px rgba(255, 255, 255, 0.1); */
 }
-	canvas {
+	#display canvas {
 		border: solid 1px rgba(255, 255, 255, 0.1);
+	}
+	#display.damaged canvas {
+		border: solid 1px red;
 	}
 
 #console {

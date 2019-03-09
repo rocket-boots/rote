@@ -17,8 +17,13 @@ function getWeightedValue(obj, seed) {
 	return ROT.RNG.getWeightedValue(obj);
 }
 
+function shuffle(arr) {
+	return ROT.RNG.shuffle(arr);
+}
+
 module.exports = {
 	setSeed,
 	roll,
-	getWeightedValue
+	getWeightedValue,
+	shuffle
 };

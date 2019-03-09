@@ -6,6 +6,7 @@ const Actor = require('./Actor');
 const Item = require('./Item');
 const Keyboard = require('./KeyboardListener');
 const Console = require('./Console');
+const random = require('./random');
 
 const MAIN_GAME_STATE = 'GAME';
 
@@ -107,6 +108,21 @@ class Game {
 		if (this.hero) {
 			this.hero.draw(this.display);
 		}
+		this.drawInterface();
+	}
+
+	drawDisplayBorder(isDamaged) {
+		const displayElt = document.getElementById('display');
+		if (isDamaged) {
+			displayElt.classList.add('damaged');
+		} else {
+			displayElt.classList.remove('damaged');
+		}
+	}
+
+	drawInterface() {
+		const intElt = document.getElementById('interface');
+		intElt.innerHTML = `HP: ${this.hero.hp} / ${this.hero.hpMax}`;
 	}
 
 	//---- Generation
@@ -300,21 +316,99 @@ class Game {
 	}
 
 	actorAddDefaultAction(actor) {
-		const things = this.getThingsOnActor(actor);
-		const thing = things[0]; // TODO: improve this with some smart way to select the item
+		const level = this.getActiveLevel();
+		const thing = level.findThingSmart(actor.x, actor.y, 'portable');
+		// TODO: Maybe get multiple things and check if they have actions?
 		console.log(thing, actor.x, actor.y);
 		if (!thing) {
 			return;
 		}
-		if (thing.hasAction('open')) {
-			actor.queueAction('open', { target: thing });
+		if (thing.portable) {
+			actor.queueAction('pickup', { target: thing });
+		} else if (thing.hasAction('use')) {
+			actor.queueAction('use', { target: thing });
 		} else if (thing.hasAction('descend') || thing.hasAction('ascend')) {
 			actor.queueAction('teleport', { teleport: thing.teleport });
 			console.log('Planning to teleport...', actor.actionQueue);
-		} else if (thing.portable) {
-			actor.queueAction('pickup', { target: thing });
 		}
 	}
+
+	advance() {
+		const startHp = this.hero.hp;
+		// TODO: advance time
+		// Do actions for all actors
+		const level = this.getActiveLevel();
+		// "Initiative" is random
+		const actors = random.shuffle(level.actors);
+		actors.forEach((actor) => {
+			actor.planAction(level, this.hero);
+			this.advanceActor(actor);
+		});
+		// this.advanceActor(this.hero);
+		const isDamaged = (startHp > this.hero.hp);
+		this.drawDisplayBorder(isDamaged);
+		this.draw();
+	}
+
+	advanceActor(actor) {
+		const level = this.getActiveLevel();
+		const action = actor.doAction();
+		if (!action) { return; }
+		const { verb, target, what, x, y } = action;
+		if (actor.isHero) {
+			if (verb === 'move') { console.log(actor.name + ' ' + verb); }
+			else { console.log(actor.name, verb, action); }
+		}
+		let message = '';
+		switch (verb) {
+			case 'move':
+				const bumpCombat = (actor.isHero || actor.aggro > 0);
+				if (action.direction === undefined) {
+					this.moveActorTo(actor, action.x, action.y, bumpCombat);
+				} else {
+					this.moveActor(actor, action.direction, bumpCombat);
+				}
+			break;
+			case 'use':
+				const outcome = target.action('use', actor);
+				message = outcome.message;
+			break;
+			case 'open':
+				message = target.action('open', actor);
+			break;
+			case 'teleport':
+				message = `${actor.name} travels to a new location...`;
+				this.teleportActor(actor, action.teleport);
+			break;
+			case 'pickup':
+				const pickedUp = this.pickupItem(actor, target);
+				if (pickedUp) {
+					message = `${actor.name} picks up the ${target.name}.`;
+				}
+			break;
+			case 'throw':
+				message = level.throw(actor, what, x, y);
+			break;
+			case 'wait':
+			message = 'You wait.';
+			break;
+		}
+		this.print(message);
+	}
+
+	pickupItem(actor, thing) {
+		if (!thing.portable) { return false; }
+		const level = this.getActiveLevel();
+		const item = level.removeItem(thing);
+		if (!item) { return false; }
+		const added = actor.inventory.add(thing);
+		if (!added) {
+			level.addItem(item);
+		}
+		return added;
+	}
+
+	//---- Exploration
 
 	discoverAroundHero() {
 		const level = this.getActiveLevel();
@@ -332,6 +426,8 @@ class Game {
 		const namesString = (namesOnHero.length > 1) ? namesOnHero.join(', ') : 'a ' + namesOnHero[0];
 		this.console.print(`You are on ${namesString}.`);
 	}
+
+	//---- System
 
 	ready(callback) {
 		domReady(() => {
@@ -358,78 +454,6 @@ class Game {
 		this.setState('OFF');
 		this.removeKeyboard();
 		// TODO: stop graphics loop
-	}
-
-	advance() {
-		// TODO: advance time
-		// TODO: Do actions for all actors
-		const level = this.getActiveLevel();
-		level.actors.forEach((actor) => {
-			actor.planAction(level, this.hero);
-			this.advanceActor(actor);
-		});
-		// this.advanceActor(this.hero);
-		this.draw();
-	}
-
-	advanceActor(actor) {
-		const action = actor.doAction();
-		if (!action) { return; }
-		const { verb, target, what, x, y } = action;
-		if (actor.isHero) {
-			console.log(actor.name, verb, action);
-		}
-		switch (verb) {
-			case 'move':
-				const bumpCombat = (actor.isHero || actor.aggro > 0);
-				if (action.direction === undefined) {
-					this.moveActorTo(actor, action.x, action.y, bumpCombat);
-				} else {
-					this.moveActor(actor, action.direction, bumpCombat);
-				}
-			break;
-			case 'open':
-				target.action('open', actor);
-			break;
-			case 'teleport':
-				this.print(`${actor.name} travels to a new location...`);
-				this.teleportActor(actor, action.teleport);
-			break;
-			case 'pickup':
-				const pickedUp = this.pickupItem(actor, target);
-				if (pickedUp) {
-					this.print(`${actor.name} picks up the ${target.name}.`);
-				}
-			break;
-			case 'throw':
-				const thrown = this.throw(actor, what, x, y);
-				if (thrown) {
-					this.print(`${actor.name} throws down a ${what.name}.`);
-				}
-			break;
-		}
-	}
-
-	pickupItem(actor, thing) {
-		if (!thing.portable) { return false; }
-		const level = this.getActiveLevel();
-		const item = level.removeItem(thing);
-		if (!item) { return false; }
-		const added = actor.inventory.add(thing);
-		if (!added) {
-			level.addItem(item);
-		}
-		return added;
-	}
-
-	throw(actor, what, x, y) {
-		const level = this.getActiveLevel();
-		const item = actor.inventory.remove(what);
-		if (!item) { return false; }
-		item.x = (typeof x === 'number') ? x : actor.x;
-		item.y = (typeof y === 'number') ? y : actor.y;
-		level.addItem(item);
-		return true;
 	}
 
 	loadData(data) {
@@ -474,11 +498,8 @@ class Game {
 	}
 
 	getThingsOnActor(actor) {
-		const level = this.getActiveLevel();
-		const propsOnHero = level.findProps(actor.x, actor.y);
-		const itemsOnHero = level.findItems(actor.x, actor.y);
-		const allThingsOnHero = propsOnHero.concat(itemsOnHero);
-		return allThingsOnHero;
+		const { x, y } = actor;
+		return this.getActiveLevel().findThings(x, y);
 	}
 
 	//---- Sets

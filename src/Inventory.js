@@ -8,6 +8,10 @@ class Inventory {
 		return (this.items.length >= this.size);
 	}
 
+	hasSpace() {
+		return !this.isFull();
+	}
+
 	add(item) {
 		if (this.isFull()) {
 			return false;
@@ -49,6 +53,11 @@ class Inventory {
 
 	contains(itemName) {
 		let foundItem = this.items.find((item) => { return (item.name === itemName); });
+		return Boolean(foundItem);
+	}
+
+	containsType(typeName) {
+		let foundItem = this.items.find((item) => { return (item.type === typeName); });
 		return Boolean(foundItem);
 	}
 }
