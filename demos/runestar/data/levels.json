@@ -8,9 +8,11 @@
 				{ "type": "stairsDown",	"quantity": 1 },
 				{ "type": "pedestal", "quantity": 1	},
 				{ "type": "shelves", "quantity": 2 },
+				{ "type": "chest", "quantity": 2 },
 				{ "type": "chair", "quantity": 3 },
 				{ "type": "table", "quantity": 6 },
-				{ "type": "lamp", "quantity": 3 }
+				{ "type": "lamp", "quantity": 3 },
+				{ "type": "extractor", "quantity": 3 }
 			],
 			"monsterSpawn": 8,
 			"monsters": [

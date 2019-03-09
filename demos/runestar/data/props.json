@@ -11,20 +11,101 @@
 			"character": "<",
 			"color": "#bbb"
 		},
+
 		"alembic": {
 			"name": "alembic",
 			"character": "⚗",
-			"color": "#f99"
+			"color": "#f99",
+			"use": {
+				"message": "You have no idea how alchemy works."
+			}
+		},
+		"chair": {
+			"name": "chair",
+			"character": "⑁",
+			"color": "#ccb",
+			"use": {
+				"message": "You rest on the seat for a moment."
+			}
+		},
+		"chest": {
+			"name": "Chest",
+			"character": "⊟", "_c": "⍞⬒🛢",
+			"color": "#35e",
+			"inventorySize": 3
 		},
 		"dirt": {
 			"name": "dirt",
 			"character": ".",
-			"color": "#440"
+			"color": "#960"
+		},
+		"door": {
+			"name": "Door",
+			"character": "+", "_c": "◫",
+			"states": {
+				"open": {
+					"character": "'"
+				}
+			},
+			"color": "#b93",
+			"use": {
+				"message": "The door seems to be broken."
+			}
+		},
+		"extractor": {
+			"name": "Sunstone Extractor",
+			"character": "⌼",
+			"surrounding": ["ⵖ", "⊣", "⋑", "⊣", "⏚", "⊢", "⋐", "⊢"],
+			"color": "#f99",
+			"inventorySize": 1,
+			"use": {
+				"requires": [
+					{ "item": "sunstone" }
+				],
+				"message": "You activate the extractor and it begins crushing the sunstone! OH NO! An EXPLOSION!",
+				"missingMessage": "A sunstone is required. (You must drop it on the same space)",
+				"effects": [
+					{ "spawn": "fire" },
+					{ "endGame": "quest" },
+					{ "score": 1000 }
+				]
+			}
+		},
+		"extractorSwitch": {
+			"name": "extractor switch",
+			"character": "⍎",
+			"color": "#fa8"
+		},
+		"gizmo": {
+			"name": "mysterious gizmo",
+			"character": "⧮",
+			"color": "#a88",
+			"illumination": 1,
+			"use": {
+				"message": "You have never seen technology like this before."
+			}
 		},
 		"grass": {
 			"name": "grass",
 			"character": "\"",
 			"color": "#4c4"
+		},
+		"lamp": {
+			"name": "lamp",
+			"character": "⍝",
+			"color": "#ffc",
+			"illumination": 2,
+			"use": {
+				"message": "The lamp has a firey glow."
+			}
+		},
+		"machinery": {
+			"name": "Machinery",
+			"character": "ⴼ", "_c": "ⵄⵖ",
+			"color": "#fa8",
+			"use": {
+				"message": "You attempt to fiddle with it but realize you might accidentally lose a finger in one of the gears."
+			}
 		},
 		"pedestal": {
 			"name": "Pedestal",
@@ -36,58 +117,26 @@
 			"character": "∴",
 			"color": "#aaa"
 		},
-		"table": {
-			"name": "Table",
-			"character": "⊓", "_c": "⊓ᚂ",
-			"color": "#ccb"
-		},
-		"chair": {
-			"name": "chair",
-			"character": "⑁",
-			"color": "#ccb"
-		},
-		"chest": {
-			"name": "Chest",
-			"character": "⊟", "_c": "⍞⬒🛢",
-			"color": "#993"
-		},
-		"door": {
-			"name": "Door",
-			"character": "+", "_c": "◫",
-			"color": "#b93"
-		},
-		"extractor": {
-			"name": "extractor",
-			"character": "⌼",
-			"surrounding": ["ⵖ", "⊣", "⋑", "⊣", "⏚", "⊢", "⋐", "⊢"],
-			"color": "#f99"
-		},
-		"extractorSwitch": {
-			"name": "extractor switch",
-			"character": "⍎",
-			"color": "#fa8"
-		},
-		"lamp": {
-			"name": "lamp",
-			"character": "⍝",
-			"color": "#ffc",
-			"illumination": 2
-		},
-		"machinery": {
-			"name": "Machinery",
-			"character": "ⴼ", "_c": "ⵄⵖ",
-			"color": "#fa8"
-		},
-		"gizmo": {
-			"name": "mysterious gizmo",
-			"character": "⧮",
-			"color": "#a88",
-			"illumination": 1
-		},
 		"shelves": {
 			"name": "shelves",
 			"character": "▤",
-			"color": "#971"
+			"color": "#971",
+			"use": {
+				"message": "You look through the shelves and find ancient books of knowledge. Too bad you can't read."
+			}
+		},
+		"table": {
+			"name": "Table",
+			"character": "⊓", "_c": "⊓ᚂ⊏⊐",
+			"color": "#ccb",
+			"states": {
+				"flipped": {
+					"character": "⊔"
+				}
+			},
+			"use": {
+				"message": "You try to flip the table but you're not strong or angry enough."
+			}
 		}
 	}
 }

@@ -41,9 +41,9 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 - [x] Ability to pick up items
 - [x] Ability to drop item
 - [x] Intro text to explain plot
-- [ ] Ability to pick item off of a prop
+- [x] Ability to pick item off of a prop
 - [ ] End-game trigger when placing item onto extractor
-- [ ] Fragility for the sunstone, damaged when dropped, when broken, spawn fire
+
 - [ ] Spreading fire/explosion (⍦⛆⋀∭※) once the end-game is triggered
 
 ### Desired Wishlist (Things that will make the game more complete)
@@ -103,9 +103,13 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 - [x] Handle pushing past if on same faction moving past
 - [x] Monster wandering
 - [x] Fleeing AI (just random for now)
+- [ ] Random order for actions
 
-#### Dungeon
+#### Dungeon & Assorted Fun
 
+- [ ] Fragility for the sunstone, damaged when dropped, when broken, spawn fire
+- [ ] Bottle - Healing potion container
+- [ ] Refill bottle at alembic
 - [ ] Weights for item and prop generation
 - [ ] New items for each level (even if they don't do anything yet)
 - [ ] Escape ship - fixed map element added onto level 9 or 10
