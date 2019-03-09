@@ -1,3 +1,18 @@
+@font-face {
+	font-family: "AppleII";
+	src: url("../../fonts/AppleII.ttf");
+}
+
+@font-face {
+	font-family: "Fix15MonoBold";
+	src: url("../../fonts/Fix15Mono-Bold.woff");
+}
+
+@font-face {
+	font-family: "White Rabbit";
+	src: url("../../fonts/whitrabt.ttf");
+}
+
 html, body {
 	margin: 0;
 	padding: 0;
@@ -29,36 +44,41 @@ h1 {
 	opacity: 0.25;
 }
 
-canvas {
-	border: solid 1px rgba(255, 255, 255, 0.1);
-}
-
-@font-face {
-	font-family: "AppleII";
-	src: url("../../fonts/AppleII.ttf");
-}
-
-@font-face {
-	font-family: "Fix15MonoBold";
-	src: url("../../fonts/Fix15Mono-Bold.woff");
-}
-
-@font-face {
-	font-family: "White Rabbit";
-	src: url("../../fonts/whitrabt.ttf");
-}
-
 .rote {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: [left] 840px [right] auto;
+	grid-template-rows: [top] 1fr [middle] 6fr [bottom] 4fr;
+	grid-template-areas:
+		"header header"
+		"display interface"
+		"console controls"
+	;
+	grid-gap: 1%;
+	padding: 1%;
+	box-sizing: border-box;
+	
+	
 	width: 100%;
 	height: 100%;
+	overflow: hidden;
 }
 
+.rote > header {
+	grid-area: header;
+}
+
+#display {
+	grid-area: display;
+	/* border-bottom: solid 1px rgba(255, 255, 255, 0.1); */
+}
+	canvas {
+		border: solid 1px rgba(255, 255, 255, 0.1);
+	}
+
 #console {
-	width: 840px;
-	border: solid 1px rgba(255, 255, 255, 0.1);
-	flex-grow: 1;
+	grid-area: console;
+	align-self: stretch;
+	/* border: solid 1px rgba(255, 255, 255, 0.1); */
 	padding: 1em;
 	padding-bottom: 2em;
 	box-sizing: border-box;
@@ -92,4 +112,19 @@ canvas {
 }
 .tip {
 	color: #0ff;
+}
+
+#interface {
+	grid-area: interface;
+	/* border: solid 1px rgba(255, 255, 255, 0.1); */
+	padding: 1em;
+}
+
+#controls {
+	grid-area: controls;
+	border: solid 1px rgba(255, 255, 255, 0.1);
+	border-width: 1px 0 0 1px;
+	padding: 1em;
+	opacity: 0.5;
+	font-size: 90%;
 }
