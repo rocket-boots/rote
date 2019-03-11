@@ -7,7 +7,7 @@ const DIRECTION8 = {
 const DIRECTION4 = { 'UP': 0, 'RIGHT': 1, 'DOWN': 2, 'LEFT': 3 };
 const DIRECTION4_ARRAY = ['UP', 'RIGHT', 'DOWN', 'LEFT'];
 
-const USED_KEYS = ['i', 't'];
+const USED_KEYS = ['i', 't', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const KEY_MAP = {
 	"9":	"TAB",
 	"13":	"ENTER",
@@ -63,7 +63,7 @@ class KeyboardListener {
 	}
 
 	setState(state = UNSPECIFIED_STATE) {
-		this.setState = state.toString();
+		this.state = state.toString();
 	}
 
 	on(state, key, callback) {

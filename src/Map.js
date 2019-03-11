@@ -7,6 +7,8 @@ class Map {
 	constructor(options = {}) {
 		this.baseSeed = options.seed || 1;
 		this.seed = this.baseSeed;
+		this.color = options.color || '#777';
+		this.background = options.background || '#222';
 		this.type = options.type || 'digger';
 		this.rotMap = options.rotMap;
 		this.cells = {};
@@ -139,7 +141,8 @@ class Map {
 		if (cell) {
 			cell.setCharacter(char);
 		} else {
-			this.cells[key] = new Cell({ character: char });
+			const { color, background } = this;
+			this.cells[key] = new Cell({ color, background, character: char });
 		}
 		return key;
 	}

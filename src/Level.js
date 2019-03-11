@@ -8,17 +8,24 @@ const { DIRS_4, DIRS_8_DIAGNOLS } = require('./constants');
 
 class Level {
 	constructor(options = {}, refData = {}) {
-		console.log('Creating Level', options.name, options.levelIndex);
 		this.seed = options.seed || 1;
-		this.name = options.name || '';
+		this.name = options.name || 'Unknown level';
+		this.description = options.description || null;
 		this.levelIndex = options.levelIndex || 0;
-		this.background = '#222';
-		const mapOptions = { ...options.map, seed: this.seed };
+		this.color = options.color || '#777';
+		this.background = options.background || '#222';
+		const mapOptions = {
+			color: this.color,
+			background: this.background,
+			...options.map,
+			seed: this.seed
+		};
 		this.map = new Map(mapOptions);
 		this.actors = this.generateActors(options, refData);
 		this.items = this.generateItems(options, refData.items);
 		this.props = this.generateProps(options, refData.props);
 		this.eye = { x: 0, y: 0, sightRange: 7 };
+		this.customEffects = { ...options.customEffects };
 	}
 
 	draw(display) {
@@ -56,11 +63,23 @@ class Level {
 	}
 
 	drawActors(display) {
+		// Draw dead first, then non-dead
 		this.actors.forEach((actor) => {
-			const lighting = this.map.getLightingAt(this.eye.x, this.eye.y);
-			const inView = this.isInView(actor.x, actor.y);
-			actor.draw(display, lighting, inView);
+			if (actor.dead()) {
+				this.drawActor(display, actor);
+			}
 		});
+		this.actors.forEach((actor) => {
+			if (!actor.dead()) {
+				this.drawActor(display, actor);
+			}
+		});
+	}
+
+	drawActor(display, actor) {
+		const lighting = this.map.getLightingAt(this.eye.x, this.eye.y);
+		const inView = this.isInView(actor.x, actor.y);
+		actor.draw(display, lighting, inView);
 	}
 
 	isInView(x, y) { // TODO: optimize
@@ -97,15 +116,6 @@ class Level {
 	findItem(x, y) {
 		const foundThings = this.findItems(x, y);
 		return (foundThings.length) ? foundThings[0] : null;
-		// let i = this.items.length - 1;
-		// while (i >= 0) {
-		// 	const item = this.items[i];
-		// 	if (!item.containedIn && item.x === x && item.y === y) {
-		// 		return item;
-		// 	}
-		// 	i--;
-		// }
-		// return null;
 	}
 	findItems(x, y) {
 		return this.items.filter((item) => {
@@ -158,7 +168,6 @@ class Level {
 	findThingsByDirections(thingName, dirs, x, y) {
 		const coords = [];
 		dirs.forEach((dir) => { coords.push({ x: x + dir.x, y: y + dir.y }); });
-		console.log(dirs);
 		return this[thingName].filter((thing) => {
 			const matches = coords.filter((xy) => {
 				return xy.x === thing.x && xy.y === thing.y && !thing.containedIn
@@ -169,18 +178,21 @@ class Level {
 
 	findThingSmart(x, y, perferredProperty) {
 		let things = this.findThings(x, y);
-		console.log('find smart - on spot', things);
+		// console.log('find smart - on spot', things);
 		if (!things.length) {
 			things = this.findThingsCardinal(x, y);
-			console.log('find smart - cardinal', things);
+			// console.log('find smart - cardinal', things);
 			if (!things.length) {
 				things = this.findThingsDiagnol(x, y);
-				console.log('find smart - diagnols', things);
+				// console.log('find smart - diagnols', things);
 			}
 		}
 		if (perferredProperty) {
-			things.sort((a, b) => { console.log(a, b, a[perferredProperty]); return b[perferredProperty]; });
-			console.log("sorted", things);
+			things.sort((a, b) => {
+				// console.log(a, b, a[perferredProperty]);
+				return b[perferredProperty];
+			});
+			// console.log("sorted", things);
 		}
 		return things[0];
 	}
@@ -190,7 +202,6 @@ class Level {
 		if (!retries) {
 			return cell;
 		}
-		console.log(retries, clearing);
 		// TODO: take into account props, actors ...?
 		if (this.findMapClearing(cell.x, cell.y) >= clearing) {
 			cell = this.findRandomFreeCell(see, clearing, (retries - 1));
@@ -209,12 +220,21 @@ class Level {
 
 	// Actions
 
+	useThing(actor, actionName, thing) {
+		const outcome = thing.action(actionName, actor);
+		this.doEffects(outcome.effects, actor, actor);
+		return outcome;
+	}
+
 	throw(actor, what, x, y) {
 		const item = actor.inventory.remove(what);
 		if (!item) { return false; }
 		item.x = (typeof x === 'number') ? x : actor.x;
 		item.y = (typeof y === 'number') ? y : actor.y;
-		const containers = this.findThings(x, y).filter((thing) => { console.log(thing); return thing.hasSpace(); });
+		const containers = this.findThings(x, y).filter((thing) => {
+			console.log(thing);
+			return thing.hasSpace();
+		});
 		if (containers.length) {
 			const container = containers[0];
 			container.addToInventory(item);
@@ -222,6 +242,152 @@ class Level {
 		}
 		this.addItem(item);
 		return `${actor.name} throws down a ${what.name}.`;
+	}
+
+	doInitiative() {
+		const livingActors = this.actors.filter((actor) => !actor.dead());
+		let orderedActors = random.shuffle(livingActors);
+		// TODO: Look for initiative boost, put at top of list
+	}
+
+	static removeEffects(effects, key) {
+		let i = effects.indexOf(key);
+		while (i > -1) {
+			effects.splice(i, 1);
+			i = effects.indexOf(key);
+		}
+	}
+
+	resolveCombatEffects(attacker, defender) {
+		let attackEffects = attacker.activateAbilities('attack');
+		let defendEffects = defender.activateAbilities('attacked');
+		let damageEffects;
+		let damagedEffects;
+
+		attackEffects.push('attack');
+
+		console.log(attacker.name, JSON.stringify(attackEffects), 'vs', defender.name, JSON.stringify(defendEffects), defender);
+
+		if (defendEffects.includes('cancelAttack')) {
+			Level.removeEffects(attackEffects, 'attack');
+		}
+
+		if (attackEffects.includes('attack')) {
+			attackEffects.push('weaponDamage');
+		}
+		if (attackEffects.includes('damage') || attackEffects.includes('weaponDamage')) {
+			damageEffects = defender.activateAbilities('damage');
+			attackEffects = attackEffects.concat(damageEffects);
+			damagedEffects = defender.activateAbilities('damaged');
+			defendEffects = defendEffects.concat(damagedEffects);
+		}
+		if (defendEffects.includes('cancelDamage') || attackEffects.includes('cancelDamage')) {
+			Level.removeEffects(attackEffects, 'damage');
+			Level.removeEffects(attackEffects, 'weaponDamage');
+		}
+
+		console.log(attacker.name, JSON.stringify(attackEffects), 'vs', JSON.stringify(defendEffects));
+
+		const outcomeAttack = this.doEffects(attackEffects, attacker, defender);
+		const outcomeDefend = this.doEffects(defendEffects, defender, attacker);
+
+		// TODO: generate messages
+
+		return { outcomeAttack, outcomeDefend, attackEffects, defendEffects };
+	}
+
+	doEffects(effects, actor, opponent) {
+		let damage = 0;
+		if (!effects) { return { damage }; }
+		effects.forEach((effect) => {
+			damage += this.doEffect(effect, actor, opponent);
+		});
+		return { damage };
+	}
+
+	doEffect(effect, actor, opponent) {
+		console.log('doEffect', effect);
+		let damage = 0;
+		switch(effect) {
+			case 'damage':
+				damage += 1;
+				opponent.wound(1);
+			break;
+			case 'weaponDamage':
+				damage += actor.getWeaponDamage();
+				opponent.wound(damage);
+			break;
+			case 'heal':
+			case 'hp':
+				actor.heal(1);
+			break;
+			case 'ap':
+				actor.healPool('ap', 1);
+			break;
+			case 'bp':
+				actor.healPool('bp', 1);
+			break;
+			case 'ep':
+				actor.healPool('ep', 1);
+			break;
+			case 'moveSwitch': {
+				const { x, y } = actor;
+				actor.setCoordinates(opponent.x, opponent.y);
+				opponent.setCoordinates(x, y);
+			}
+			break;
+			case 'apDamage':
+				actor.damagePool('ap', 1);
+			break;
+			case 'bpDamage':
+				actor.damagePool('bp', 1);
+			break;
+			case 'epDamage':
+				actor.damagePool('ep', 1);
+			break;
+			case 'push':
+				this.pushActor(actor, opponent);
+			break;
+			case 'pushAoe':
+				this.pushActor(actor, opponent);
+				// TODO: Handle aoe --> everyone (accept opponent) around hitX, hitY gets knocked back
+			break;
+			case 'moveBack':
+				this.pushActor(opponent, actor);
+			break;
+			case 'initiative':
+				actor.initiativeBoost = 1;
+			break;
+			case "fire":
+				// TODO:
+			break;
+			case "endGame":
+				// TODO
+			break;
+			case "score1000":
+				actor.score += 1000;
+			break;
+			default:
+				this.doCustomEffect(effect, actor, opponent);
+			break;
+		}
+		return damage;
+	}
+
+	doCustomEffect(effect, actor, opponent) {
+		if (typeof this.customEffects[effect] === 'function') {
+			this.customEffects[effect](effect, actor, opponent);
+		}
+	}
+
+	pushActor(pusher, pushee) {
+		const { x, y } = pusher;
+		let moveX = pushee.x - x;
+		let moveY = pushee.y - y;
+		moveX = moveX / (moveX === 0 ? 1 : Math.abs(moveX));
+		moveY = moveY / (moveY === 0 ? 1 : Math.abs(moveY));
+		// console.log('pushing', pushee.name, moveX, moveY);
+		pushee.move(moveX, moveY);
 	}
 
 	// Generation
@@ -256,7 +422,7 @@ class Level {
 
 		const arr = [];
 		props.forEach((levelProp) => {
-			const quantity = levelProp.quantity || 1;
+			const quantity = (typeof levelProp.quantity === 'number') ? levelProp.quantity : 1;
 			// console.log(levelProp);
 			// TODO: handle weight, etc.
 			for (let i = 0; i < quantity; i++) {
@@ -318,7 +484,7 @@ class Level {
 				})();
 			}
 		}
-		console.log('Actors at depth', depth, actors);
+		// console.log('Actors at depth', depth, actors);
 		return actors;
 	}
 

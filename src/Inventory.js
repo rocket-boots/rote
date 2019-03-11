@@ -27,10 +27,18 @@ class Inventory {
 		const i = this.items.indexOf(item);
 		if (i <= -1) {
 			console.warn('nothing found in', this.items, item);
-			return;
+			return false;
 		}
 		const arr = this.items.splice(i, 1);
 		return arr[0];
+	}
+
+	removeType(typeKey) {
+		const itemsOfType = this.items.filter((item) => { return item.type === typeKey; });
+		if (itemsOfType.length === 0) {
+			return false;
+		}
+		return this.remove(itemsOfType[0]);
 	}
 
 	get(n) {
@@ -45,6 +53,12 @@ class Inventory {
 	getString() {
 		const arr = this.items.map((item, i) => { return `[${(i + 1)}] ${item.name}`; });
 		return (arr.length) ? arr.join(', ') : 'nothing';
+	}
+
+	loopOverContents(fn) {
+		this.items.forEach((item, i) => {
+			fn(item, i);
+		});
 	}
 
 	hasContents() {

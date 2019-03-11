@@ -5,13 +5,16 @@ const Level = require('./Level');
 const Actor = require('./Actor');
 const Item = require('./Item');
 const Keyboard = require('./KeyboardListener');
+const MusicBox = require('./MusicBox');
 const Console = require('./Console');
 const random = require('./random');
 
 const MAIN_GAME_STATE = 'GAME';
+const SPLASH_STATE = 'SPLASH';
 
 class Game {
-	constructor({ id, consoleId, data }) {
+	constructor(options) {
+		const { id, consoleId, data } = options;
 		this.id = id;
 		this.displayContainer = document.getElementById(id || 'display');
 		this.console = new Console({ id: consoleId });
@@ -28,10 +31,13 @@ class Game {
 		this.engine = null;
 		this.keyboard = null;
 		this.state = 'INIT';
+		this.states = ['INIT', SPLASH_STATE, MAIN_GAME_STATE];
 		// this.setupEngine();
 		this.loadingPromise = null;
 		this.console.setup();
 		this.loadData(data);
+		this.hooks = {};
+		this.customEffects = { ...options.customEffects };
 	}
 
 	setupEngine() {
@@ -42,6 +48,11 @@ class Game {
 
 	setupKeyboard() {
 		this.keyboard = new Keyboard({ state: MAIN_GAME_STATE, autoStart: true });
+		// Splash state
+		this.keyboard.on(SPLASH_STATE, 'ENTER', () => {
+			this.setState(MAIN_GAME_STATE);
+		});
+		// Main state
 		this.keyboard.on(MAIN_GAME_STATE, 'DIRECTION', (keyName, keyCode, direction) => {
 			// TODO: Lock and unlock the game? or do something else to determine if it's OK to move
 			this.hero.queueAction('move', { direction });
@@ -75,8 +86,18 @@ class Game {
 			}
 		});
 		this.keyboard.on(MAIN_GAME_STATE, 'i', () => { this.showInventory(); });
+		for (let i = 0; i < 9; i++) {
+			const key = String(i + 1);
+			this.keyboard.on(MAIN_GAME_STATE, key, () => {
+				this.hero.readyAbilityByIndex(i);
+				this.draw();
+			});
+		}
 		// this.keyboard.start();
-		console.log(this.keyboard);
+	}
+
+	setupMusic() {
+		this.music = new MusicBox(this.data.playlist);
 	}
 
 	removeKeyboard() {
@@ -104,32 +125,20 @@ class Game {
 	}
 
 	draw() {
-		this.getActiveLevel().draw(this.display);
-		if (this.hero) {
-			this.hero.draw(this.display);
-		}
-		this.drawInterface();
+		this.display.drawLevel(this, this.getActiveLevel(), this.hero);
 	}
 
-	drawDisplayBorder(isDamaged) {
-		const displayElt = document.getElementById('display');
-		if (isDamaged) {
-			displayElt.classList.add('damaged');
-		} else {
-			displayElt.classList.remove('damaged');
-		}
-	}
-
-	drawInterface() {
-		const intElt = document.getElementById('interface');
-		intElt.innerHTML = `HP: ${this.hero.hp} / ${this.hero.hpMax}`;
-	}
 
 	//---- Generation
 
 	createLevel(options = {}, seed) {
 		options.seed = seed || options.seed;
-		const levelOptions = { ...options, levelIndex: this.levels.length };
+		const levelOptions = {
+			customEffects: this.customEffects,
+			...options,
+			levelIndex: this.levels.length
+		};
+		// console.warn(this.customEffects, levelOptions);
 		const level = new Level(levelOptions, this.data);
 		this.levels.push(level);
 		return level;
@@ -196,7 +205,6 @@ class Game {
 	connectStairs() {
 		const STAIR_LINK = 'stairLink';
 		const propTypes = this.getDataPropArray();
-		console.log(propTypes);
 		const stairsDownTypes = propTypes.filter((propType) => { return Boolean(propType[STAIR_LINK]); });
 		this.levels.forEach((level, i) => {
 			// Handle each type of stairs
@@ -287,7 +295,8 @@ class Game {
 	}
 
 	teleportActor(actor, teleportParams = {}) {
-		console.warn('teleporting', actor, teleportParams);
+		const originalLevelIndex = this.activeLevelIndex;
+		// console.warn('teleporting', actor, teleportParams);
 		const { levelIndex, x, y } = teleportParams;
 		const currentLevel = this.getActiveLevel();
 		currentLevel.removeActor(actor);
@@ -300,18 +309,23 @@ class Game {
 			this.discoverAroundHero();
 			this.narrateAroundHero();
 		}
+		if (originalLevelIndex !== levelIndex) {
+			this.hook('afterTeleportLevel', { levelIndex, x, y });
+		}
 		// this.draw();
 	}
 
 	resolveCombat(actor, opponent, x, y) {
+		const level = this.getActiveLevel();
 		if (!actor || !opponent || actor.faction === opponent.faction) {
 			return false;
 		}
-		const damage = 1;
-		opponent.wound(damage);
-		g.print(`${actor.name} attacks ${opponent.name} and does ${damage} damage!`);
+		const { outcomeAttack } = level.resolveCombatEffects(actor, opponent);
+		// TODO: get messages from resolve and effects methods
+		g.print(`${actor.name} attacks ${opponent.name} and does ${outcomeAttack.damage} damage!`);
 		if (opponent.dead()) {
 			g.print(`${opponent.name} has been killed.`);
+			actor.score += (this.activeLevelIndex + 1) * 10;
 		}
 	}
 
@@ -346,7 +360,11 @@ class Game {
 		});
 		// this.advanceActor(this.hero);
 		const isDamaged = (startHp > this.hero.hp);
-		this.drawDisplayBorder(isDamaged);
+		this.display.drawDamage(isDamaged);
+		if (this.hero.dead()) {
+			this.print('R.I.P. Congratulations! YOU HAVE DIED!', 'plot');
+			this.print('Reload the page to play again.', 'tip');
+		}
 		this.draw();
 	}
 
@@ -370,15 +388,22 @@ class Game {
 				}
 			break;
 			case 'use':
-				const outcome = target.action('use', actor);
+				const outcome = level.useThing(actor, 'use', target);
 				message = outcome.message;
 			break;
 			case 'open':
-				message = target.action('open', actor);
+				message = level.useThing(actor, 'open', target);
 			break;
 			case 'teleport':
-				message = `${actor.name} travels to a new location...`;
+				message = `${actor.name} travels to a new location: `;
 				this.teleportActor(actor, action.teleport);
+				{
+					const newLevel = this.getActiveLevel();
+					message += newLevel.name;
+					if (newLevel.description) {
+						message += ' - ' + newLevel.description;
+					}
+				}
 			break;
 			case 'pickup':
 				const pickedUp = this.pickupItem(actor, target);
@@ -390,9 +415,13 @@ class Game {
 				message = level.throw(actor, what, x, y);
 			break;
 			case 'wait':
-			message = 'You wait.';
+				actor.wait();
+				if (actor.isHero) {
+					message = `${actor.name} waits (random recovery of AP, BP, or EP points).`;
+				}
 			break;
 		}
+		
 		this.print(message);
 	}
 
@@ -445,7 +474,9 @@ class Game {
 	start() {
 		this.setupEngine();
 		this.setupKeyboard();
-		this.setState(MAIN_GAME_STATE);
+		this.setupMusic();
+		this.setStateDetect(SPLASH_STATE);
+		// this.setState(MAIN_GAME_STATE);
 		// TODO: start graphics loop
 		this.draw();
 	}
@@ -471,6 +502,29 @@ class Game {
 		}
 		this.loadingPromise = Promise.all(promises); // .then((resp) => { console.log(resp); });
 		return this.loadingPromise;
+	}
+
+	//---- Hooks
+
+	addHook(hookName, fn) {
+		if (!this.hooks[hookName]) {
+			this.hooks[hookName] = [];
+		}
+		this.hooks[hookName].push(fn);
+	}
+
+	removeHook(hookName, fn) {
+		if (!this.hooks[hookName]) { return; }
+		const i = this.hooks[hookName].indexOf(fn);
+		this.hooks[hookName].splice(i, 1);
+	}
+
+	hook(hookName, data = {}) {
+		const hook = this.hooks[hookName];
+		if (!hook) { return; }
+		hook.forEach((fn) => {
+			fn(data, this, hookName);
+		});
 	}
 
 	//---- Gets
@@ -513,8 +567,25 @@ class Game {
 		this.data[key] = Object.freeze(obj);
 	}
 
+	setStateDetect(stateFallback) {
+		// TODO: improve... not sure i like how this works
+		// const hash = location.hash.substring(1).toUpperCase();
+		// if (this.states.includes(hash)) {
+		// 	return this.setState(hash);
+		// }
+		return this.setState(stateFallback);
+	}
+
 	setState(state) {
+		console.log('Setting state:', state);
+		const prefix = 'rote-state-';
 		this.state = state;
+		// const body = document.getElementsByClassName('rote-state')[0];
+		const body = document.getElementsByTagName('body')[0];
+		// body.className = 'rote-state'; // TODO: make this smarter so it only removes rote states
+		// body.classList.add(prefix + this.state.toLowerCase());
+		body.className = 'rote-state ' + prefix + state.toLowerCase();
+		location.hash = state.toLowerCase();
 		this.keyboard.setState(state);
 	}
 }

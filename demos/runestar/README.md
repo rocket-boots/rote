@@ -42,54 +42,52 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 - [x] Ability to drop item
 - [x] Intro text to explain plot
 - [x] Ability to pick item off of a prop
-- [ ] End-game trigger when placing item onto extractor
-
-- [ ] Spreading fire/explosion (⍦⛆⋀∭※) once the end-game is triggered
+- [x] End-game trigger when placing item onto extractor
 
 ### Desired Wishlist (Things that will make the game more complete)
 
 #### UI
 
-- [ ] Display hitpoints
-- [ ] Show level number / progress on the UI
+- [x] Display hitpoints
+- [x] Show level number / progress on the UI
 - [ ] Display inventory on right
-- [ ] Display maneuvers on right
+- [x] Display maneuvers on right
 - [ ] Allow for multi-key commands (e.g. (t)hrow -> number for selection)
 
 #### Combat System
 
-- [ ] Melee points (positioning, strike)
-- [ ] Balance points (footwork)
-- [ ] Endurance points
+- [x] Melee points (positioning, strike)
+- [x] Balance points (footwork)
+- [x] Endurance points
 - [ ] To-Hit, Crit, Dodge, Soak percentages
-- [ ] Actions:
-    - [ ] Move
-    - [ ] Attack ("bump" / move onto enemy)
-	- [ ] Wait (Space)
-        - [ ] Recovery - gain +1 points in all catagories if waiting and not attacked
+- [x] Actions:
+    - [x] Move
+    - [x] Attack ("bump" / move onto enemy)
+	- [x] Wait (Space)
+        - [x] Recovery - gain +1 points in all catagories if waiting and not attacked
 	    - [ ] Survey - gain info on enemies if waiting and not attacked
-- [ ] Active choice:
-    - [ ] Lunge/Strike - costs melee, does extra damage
-	- [ ] Spin - costs balance, switches positions with enemy
-    - [ ] Feint - costs: melee and no damage, if you "hit" than you gain 1 melee point, enemy loses 1 melee or balance point
-	- [ ] Push - costs endurance but attacks push (extra damage if nowhere to push to?)
-	- [ ] Reprise - costs melee, but does an extra attack on enemies that retreat (if no retreat, melee is still lost)
-	- [ ] Insistence - costs endurance, but bypasses parries (if no parry, end is still lost)
-	- [ ] Sweep - cost: no damage and endurance, but knocks back all enemies around
-- [ ] Reflex (passive) choice:
-    - [ ] Parry\* -- costs Melee to avoid attack (requires a weapon)
-	- [ ] Dodge\* -- costs Balance to avoid attack (requires one free space)
-	- [ ] Endure\* -- costs Endurance to absorb the hit
-	- [ ] Retreat -- moves backwards to avoid attack
-	- [ ] Counter-Strike -- attack, costs Melee
-	- [ ] Clear -- moves back attacker, costs endurance
-	- [ ] Stonefeet -- costs Endurance to avoid movement effects
+- [x] Active choice:
+    - [x] Lunge/Strike - costs melee, does extra damage
+	- [x] Spin - costs balance, switches positions with enemy
+    - [x] Feint - costs: melee and no damage, if you "hit" than you gain 1 melee point, enemy loses 1 melee or balance point
+	- [x] Push - costs endurance but attacks push (extra damage if nowhere to push to?)
+	- [x] Reprise - costs melee, but does an extra attack on enemies that retreat (if no retreat, melee is still lost)
+	- [x] Insistence - costs endurance, but bypasses parries (if no parry, end is still lost)
+	- [x] Sweep - cost: no damage and endurance, but knocks back all enemies around
+- [x] Reflex (passive) choice:
+    - [x] Parry\* -- costs Melee to avoid attack (requires a weapon)
+	- [x] Dodge\* -- costs Balance to avoid attack (requires one free space)
+	- [x] Endure\* -- costs Endurance to absorb the hit
+	- [x] Retreat -- moves backwards to avoid attack
+	- [x] Counter-Strike -- attack, costs Melee
+	- [x] Clear -- moves back attacker, costs endurance
+	- [x] Stonefeet -- costs Endurance to avoid movement effects
 - [ ] "Reshuffle"?
 
 #### Leveling
 
 - [x] Ability to go up stairs
-- [ ] "Level up" - gain +1 point and a new action for each level that is explored
+- [x] "Level up" - gain +1 point and a new action for each level that is explored
 - [ ] Show description of level when going up/down
 
 #### Replayability
@@ -118,7 +116,7 @@ This game is beginning as a 7DRL game, starting from the rote-js "Pedro" demo, a
 
 #### States
 
-- [ ] Title screen
+- [x] Title screen
 - [ ] Win / End of game screen
 - [ ] Death screen
 - [ ] Menu button and options, including links
@@ -155,6 +153,7 @@ Unlikely to get to these, but they would be great:
 
 #### Story
 
+- [ ] Spreading fire/explosion (⍦⛆⋀∭※) once the end-game is triggered
 - [ ] NPC that acts as your quest-giver
 - [ ] NPCs on various levels that give story/lore info
 - [ ] Books and notes that give story/lore info

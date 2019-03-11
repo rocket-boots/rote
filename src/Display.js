@@ -57,6 +57,37 @@ class Display {
 		}
 		return this.rotDisplay.draw(x, y, character, fgColor, bgColor);
 	}
+
+	drawLevel(game, level, hero) {
+		level.draw(this);
+		if (!hero) { return; }
+		hero.draw(this);
+		this.drawInterface(game, hero);
+	}
+
+	drawHero(hero) {
+		if (!hero) { return; }
+		hero.draw(this);
+	}
+
+	drawDamage(isDamaged = false, options = {}) {
+		// Override this
+	}
+
+	drawInterface(game = {}, hero = {}, options = {}) {
+		// Override this
+	}
+
+	static getPoolSquares(value, max, used) {
+		const maxLeft = max - value - used;
+		let str = '';
+		let i;
+		for(i = 0; i < value; i++) { str += '■'; }
+		for(i = 0; i < used; i++) { str += '▣'; }
+		for(i = 0; i < maxLeft; i++) { str += '▢'; }
+		return str;
+	}
+
 }
 
 module.exports = Display;

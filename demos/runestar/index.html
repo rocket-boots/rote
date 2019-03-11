@@ -2,25 +2,64 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Runestar: Origins</title>
+	<title>Runestar: Origins - A roguelike browser game for 7DRL</title>
 	<link rel="stylesheet" href="star.css" />
 </head>
-<body>
+<body class="rote-state">
+<article class="splash">
+	<pre title="Runestar: Origins">
+    ____  __  ___   ______________________    ____
+   / __ \/ / / / | / / ____/ ___/_  __/   |  / __ \
+  / /_/ / / / /  |/ / __/  \__ \ / / / /| | / /_/ /
+ / _, _/ /_/ / /|  / /___ ___/ // / / ___ |/ _, _/ 
+/_/ |_|\____/_/ |_/_____//____//_/ /_/  |_/_/ |_|
+          ____        _        _          
+         / __ \ ____ (_)___ _ (_)___   ___
+------- / /_/ // __// // _ `// // _ \ (_-&lt; -------
+        \____//_/  /_/ \_, //_//_//_//___/
+                      /___/ 
+	</pre>
+	<div>A Roguelike Retro Game Made for the 7DRL Challenge 2019</div>
+	<div class="tip">
+			<div>A keyboard is required to play.</div>
+		Press Enter to begin.
+	</div>
+	<div class="credits">
+		Coding by Luke @ Deathray Games
+		<!-- <br/>Music by Eijah -->
+		<br/>Uses the open source libraries: rote js and rot js
+		<br/>Fonts: "Fix15Mono-Bold" by LambdaHack and "AppleII"
+		<br/>Thanks to <a href="http://www.roguelikeradio.com/" target="_blank">Rougelike Radio</a> and the
+		<a href="https://www.reddit.com/r/roguelikedev/" target="_blank">/r/roguelikedev subreddit</a>
+		for inspiration.
+	</div>
+	<div class="links">
+		<a href="https://itch.io/jam/7drl-challenge-2019" target="_blank">7DRL Challenge 2019</a>
+		<a href="https://deathraygames.com/" target="_blank">DeathrayGames.com</a>
+		<a href="https://twitter.com/deathraygames" target="_blank">Follow me on Twitter</a>
+	</div>
+</article>
 <article class="rote">
 	<header>
 		<!-- <button>&#9776;</button> -->
 		<h1>Runestar: Origins</h1>
-		<span class="subtitle">7DRL 2019</span>
+		<span class="subtitle">v1.0 for 7DRL 2019</span>
 	</header>
 	<section id="display"></section>
 	<section id="console"></section>
 	<section id="interface"></section>
 	<section id="controls">
-		<div>Move cardinal: WASD, HJKL, Numpad, Arrows</div>
-		<div>Move diagnol: QWZX, YUBN, Numpad</div>
-		<div>Inventory: I</div>
-		<div>Toss/Drop: T</div>
-		<div>Use/Pickup: Enter</div>
+		<ul>
+			<li>Move cardinal: WASD, HJKL, Numpad, Arrows</li>
+			<li>Move diagonal: QWZX, YUBN, Numpad</li>
+			<li>Attack by "bump" movement</li>
+			<li>Ready an ability: 1-9</li>
+			<li>Inventory: I</li>
+			<li>Toss/Drop: T</li>
+			<li>Use/Pickup: Enter</li>
+			<li>Wait: Space</li>
+			<!-- <li>Toggle Music: , (comma)</li> -->
+		</ul>
 	</section>
 </article>
 <div class="scripts">

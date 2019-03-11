@@ -16,8 +16,14 @@
 			"name": "alembic",
 			"character": "⚗",
 			"color": "#f99",
+			"inventorySize": 1,
 			"use": {
-				"message": "You have no idea how alchemy works."
+				"requires": [
+					{ "item": "gold" }
+				],
+				"message": "You brew some Gold-Stout, a wonderfully healing drink!",
+				"missingMessage": "You have no idea how alchemy works, but you assume it requires gold.",
+				"effects": [ "hp", "hp" ]
 			}
 		},
 		"chair": {
@@ -25,7 +31,8 @@
 			"character": "⑁",
 			"color": "#ccb",
 			"use": {
-				"message": "You rest on the seat for a moment."
+				"message": "You rest on the seat for a moment.",
+				"effects": [ "bp", "ep" ]
 			}
 		},
 		"chest": {
@@ -62,19 +69,25 @@
 				"requires": [
 					{ "item": "sunstone" }
 				],
-				"message": "You activate the extractor and it begins crushing the sunstone! OH NO! An EXPLOSION!",
+				"message": "You activate the extractor...",
 				"missingMessage": "A sunstone is required. (You must drop it on the same space)",
 				"effects": [
-					{ "spawn": "fire" },
-					{ "endGame": "quest" },
-					{ "score": 1000 }
+					"message",
+					"score1000",
+					"gameOver",
+					"fire",
+					"damage"
 				]
 			}
 		},
-		"extractorSwitch": {
-			"name": "extractor switch",
+		"executionSwitch": {
+			"name": "Execution switch",
 			"character": "⍎",
-			"color": "#fa8"
+			"color": "#fa8",
+			"use": {
+				"message": "As you press the switch, you feel a jolt of aggressive energy.",
+				"effects": [ "ap", "ap" ]
+			}
 		},
 		"gizmo": {
 			"name": "mysterious gizmo",
@@ -104,7 +117,8 @@
 			"character": "ⴼ", "_c": "ⵄⵖ",
 			"color": "#fa8",
 			"use": {
-				"message": "You attempt to fiddle with it but realize you might accidentally lose a finger in one of the gears."
+				"message": "You attempt to fiddle with it but realize you might accidentally lose a finger in one of the gears.",
+				"effects": [ "bpDamage" ]
 			}
 		},
 		"pedestal": {

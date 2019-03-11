@@ -5,11 +5,14 @@ const Map = require('./Map');
 const Actor = require('./Actor');
 const Prop = require('./Prop');
 const Level = require('./Level');
+const Display = require('./Display');
+const random = require('./random');
 const ready = require('./ready');
 
 const rote = {
     ROT,
-    Game, Level, Map, Item, Prop, Actor,
+    Game, Level, Map, Item, Prop, Actor, Display,
+    random,
     ready
 };
 

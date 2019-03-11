@@ -11,6 +11,38 @@
 			"character": "✷", "_c": "⛭✸✷",
 			"color": "#fc0",
 			"illumination": 3
+		},
+		"ring": {
+			"name": "Ring of Chaos",
+			"character": "=",
+			"color": "#96f"
+		},
+		"sword": {
+			"name": "Blade of Badness",
+			"character": "|",
+			"color": "#677"
+		},
+		"wrench": {
+			"name": "Wrench of Stars",
+			"character": "\\",
+			"color": "#cdf",
+			"weapon": 1
+		},
+		"yendor": {
+			"name": "Amulet of Yendor",
+			"character": "⊛",
+			"color": "#9fb"
+		},
+		"pick": {
+			"name": "Mining Pickaxe",
+			"character": "⩘",
+			"color": "#ccc",
+			"weapon": 1
+		},
+		"gold": {
+			"name": "Gold nugget",
+			"character": "$",
+			"color": "#dc3"
 		}
 	}
 }

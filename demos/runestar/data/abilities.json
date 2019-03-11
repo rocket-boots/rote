@@ -1,0 +1,156 @@
+{
+	"abilities": {
+		"lunge": {
+			"name": "Lunge",
+			"description": "",
+			"readyCost": { "ap": 1 },
+			"activateOn": "damage",
+			"effects": [
+				"damage"
+			]
+		},
+		"spin": {
+			"name": "Spin",
+			"description": "",
+			"readyCost": { "bp": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"moveSwitch"
+			]
+		},
+		"feint": {
+			"name": "Feint",
+			"description": "",
+			"readyCost": { "ap": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"ap",
+				"apDamage",
+				"cancelDamage"
+			]
+		},
+		"push": {
+			"name": "Push",
+			"description": "",
+			"readyCost": { "ep": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"push"
+			]
+		},
+		"reprise": {
+			"name": "Reprise",
+			"description": "",
+			"readyCost": { "ap": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"bp"
+			]
+		},
+		"insistence": {
+			"name": "Insistence",
+			"description": "",
+			"readyCost": { "ep": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"ep",
+				"ep",
+				"cancelParry--doesn'tworkyet"
+			]
+		},
+		"sweep": {
+			"name": "Sweep",
+			"description": "",
+			"readyCost": { "ep": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"pushAoe",
+				"cancelDamage"
+			]
+		},
+		"berserk": {
+			"name": "Berserk",
+			"description": "A lust for blood heals you",
+			"readyCost": { "ap": 1 },
+			"activateOn": "attack",
+			"effects": [
+				"hp"
+			]
+		},
+
+
+		"parry": {
+			"name": "Parry",
+			"description": "",
+			"readyCost": { "ap": 1 },
+			"activateOn": "attacked",
+			"effects": [
+				"cancelAttack"
+			]
+		},
+		"dodge": {
+			"name": "Dodge",
+			"description": "",
+			"readyCost": { "bp": 1 },
+			"activateOn": "attacked",
+			"effects": [
+				"cancelAttack"
+			]
+		},
+		"endure": {
+			"name": "Endure",
+			"description": "",
+			"readyCost": { "ep": 1 },
+			"activateOn": "damaged",
+			"effects": [
+				"cancelDamage"
+			]
+		},
+		"retreat": {
+			"name": "Retreat",
+			"description": "",
+			"readyCost": { "bp": 1 },
+			"activateOn": "attacked",
+			"effects": [
+				"cancelDamage",
+				"moveBack"
+			]
+		},
+		"counterstrike": {
+			"name": "CounterStrike",
+			"description": "",
+			"readyCost": { "ap": 1 },
+			"activateOn": "attacked",
+			"effects": [
+				"attack"
+			]
+		},
+		"shove": {
+			"name": "CounterShove",
+			"description": "",
+			"readyCost": { "ep": 1 },
+			"activateOn": "attacked",
+			"effects": [
+				"push"
+			]
+		},
+		"holdground": {
+			"name": "Hold Ground",
+			"description": "",
+			"readyCost": { "ep": 1 },
+			"activateOn": "pushed",
+			"effects": [
+				"cancelPush"
+			]
+		},
+		"swift": {
+			"name": "Swift",
+			"description": "",
+			"readyCost": { "bp": 1 },
+			"activateOn": "round",
+			"effects": [
+				"initiative"
+			]
+		}
+	}
+}

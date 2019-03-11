@@ -4,6 +4,7 @@ class Console {
 		this.container = null;
 		this.list = null;
 		this.messages = [];
+		this.writeToConsoleLog = false;
 	}
 
 	setup() {
@@ -21,7 +22,9 @@ class Console {
 		if (!str) {
 			return;
 		}
-		console.log('%c' + str, 'color: #559955');
+		if (this.writeToConsoleLog) {
+			console.log('%c' + str, 'color: #559955');
+		}
 		const safeStr = str.replace('<', '&lt;');
 		this.list.innerHTML += `<li class="${classes}">${safeStr}</li>`;
 		this.container.scrollTop = this.container.scrollHeight;

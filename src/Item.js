@@ -14,6 +14,8 @@ class Item {
 		this.inventory = new Inventory({
 			size: options.inventorySize || 0
 		});
+		this.isWeapon = Boolean(options.weapon);
+		this.damage = parseInt(options.weapon, 10);
 		this.illumination = options.illumination || 0;
 		this.portable = (typeof options.portable === 'boolean') ? options.portable : true;
 		this.containedIn = null;
@@ -48,13 +50,17 @@ class Item {
 			message = (action.missingMessage) ? action.missingMessage : `Some requirement is not met to use the ${this.name}`;
 			return { message };
 		}
-		// TODO: do the things in the action data...
-		// TODO: spawn fire
-		// TODO: end game
-		// TODO: score
-
+		this.removeRequirements(action);
 		message = message + ((action.message) ? action.message : '');
-		return { message };
+		const effects = action.effects;
+		return { message, effects };
+	}
+
+	removeRequirements(action = {}) {
+		action.requires.forEach((requirement) => {
+			const typeKey = requirement.item;
+			this.inventory.removeType(typeKey);
+		});
 	}
 
 	requirementMet(action = {}, who) {

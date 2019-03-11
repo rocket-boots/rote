@@ -3,6 +3,8 @@
 		"town": {
 			"name": "Town",
 			"description": "This floor acts as the barracks for dwarven miners and engineers",
+			"color": "#788",
+			"background": "#233",
 			"map": { "type": "digger", "walls": true },
 			"props": [
 				{ "type": "stairsDown",	"quantity": 1 },
@@ -12,13 +14,12 @@
 				{ "type": "chair", "quantity": 3 },
 				{ "type": "table", "quantity": 6 },
 				{ "type": "lamp", "quantity": 3 },
-				{ "type": "extractor", "quantity": 3 }
+				{ "type": "extractor", "quantity": 0 }
 			],
 			"monsterSpawn": 8,
 			"monsters": [
 				{ "type": "dwarf", "weight": 1 },
-				{ "type": "r", "quantity": 2 },
-				{ "type": "b", "quantity": 0 }
+				{ "type": "r", "quantity": 3 }
 			],
 			"items": [
 				{ "type": "sunstone", "quantity": 1, "clearing": 2 },
@@ -26,7 +27,10 @@
 			]
 		},
 		"dungeon": {
-			"name": "Basic Dungeon Level",
+			"name": "Old Dwarven Mines",
+			"description": "Long abandoned tunnels once used to mine precious ore",
+			"color": "#616666",
+			"background": "#262222",
 			"map": { "type": "digger", "walls": true },
 			"props": [
 				{ "type": "stairsUp", "quantity": 1	},
@@ -50,10 +54,16 @@
 				{ "type": "R", "weight": 2, "minDepth": 4 },
 				{ "type": "o", "weight": 3, "minDepth": 5 },
 				{ "type": "s", "weight": 4, "minDepth": 6 }
+			],
+			"items": [
+				{ "type": "pick", "quantity": 1 },
+				{ "type": "gold", "quantity": 3 }
 			]
 		},
 		"docks": {
 			"name": "Docks (level 9)",
+			"color": "#876",
+			"background": "#321",
 			"description": "This mysterious floor is not on any maps, and seems to be newly created. It contains a lot of new high-tech machinery.",
 			"map": { "type": "digger", "walls": true },
 			"props": [
@@ -62,6 +72,7 @@
 				{ "type": "table", "quantity": 1 },
 				{ "type": "shelves", "quantity": 1 },
 				{ "type": "machinery", "quantity": 10 },
+				{ "type": "executionSwitch", "quantity": 1 },
 				{ "type": "gizmo", "quantity": 10 },
 				{ "type": "lamp", "quantity": 4 }
 			],
@@ -70,17 +81,23 @@
 				{ "type": "s", "weight": 5 },
 				{ "type": "H", "weight": 5 },
 				{ "type": "G", "weight": 1 }
+			],
+			"items": [
+				{ "type": "sword", "quantity": 1 },
+				{ "type": "wrench", "quantity": 1 }
 			]
 		},
 		"gizmo": {
 			"name": "Gizmo Room (Final Level)",
+			"color": "#747",
+			"background": "#202",
 			"description": "This dark floor smells of death.",
 			"map": { "type": "digger", "walls": true },
 			"stairsUp": 1,
 			"props": [
 				{ "type": "stairsUp", "quantity": 1	},
 				{ "type": "extractor", "quantity": 1 },
-				{ "type": "extractorSwitch", "quantity": 1 },
+				{ "type": "executionSwitch", "quantity": 1 },
 				{ "type": "chest", "quantity": 1 },
 				{ "type": "machinery", "quantity": 10 },
 				{ "type": "gizmo", "quantity": 10 },
@@ -91,6 +108,10 @@
 				{ "type": "s", "weight": 8 },
 				{ "type": "H", "weight": 1 },
 				{ "type": "T", "weight": 4 }
+			],
+			"items": [
+				{ "type": "yendor", "quantity": 1 },
+				{ "type": "ring", "quantity": 1 }
 			]
 		}
 	}

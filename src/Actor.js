@@ -1,6 +1,7 @@
 const ROT = require('rot-js');
 const Inventory = require('./Inventory');
 const geometer = require('./geometer');
+const random = require('./random');
 
 const MOVE = 'move';
 const WAIT = 'wait';
@@ -16,7 +17,7 @@ class Actor {
 		this.y = options.y || 0;
 		this.character = options.character || 'M';
 		this.originalCharacter = this.character;
-		this.color = options.color || '#ff0';
+		this.color = options.color || '#df2';
 		this.originalColor = this.color;
 		this.bloodColor = '#611';
 		// this.game = options.game || console.error('must tie actor to game');
@@ -32,11 +33,25 @@ class Actor {
 		// stats
 		this.hp = (options.hp || typeof options.hp === 'number') ? parseInt(options.hp, 10) : 2;
 		this.hpMax = this.hp;
-		this.armsPoints = options.armsPoints || 0;		// ap
-		this.balancePoints = options.balancePoints || 0;		// bp
-		this.endurancePoints = options.endurancePoints || 0;	// ep
-		this.focusPoints = options.focusPoints || 0;		// fp
-		this.willPoints = options.willPoints || 0;		// wp
+		this.ap = options.ap || 0;	// Attack/Arms
+		this.apMax = this.ap;
+		this.bp = options.bp || 0;	// Balance
+		this.bpMax = this.bp;
+		this.ep = options.ep || 0;	// Endurance
+		this.epMax = this.ep;
+		this.fp = options.fp || 0;		// Focus
+		this.fpMax = this.fp;
+		this.wp = options.wp || 0;		// Will(power)
+		this.wpMax = this.wp;
+		// advancement
+		this.xp = options.xp || 0;
+		this.score = options.score || 0;
+		// abilities
+		this.maxAbilities = 9;
+		this.abilities = {};
+		this.abilityList = [];
+		// temporary
+		this.initiativeBoost = 0;
 	}
 
 	draw(display, lighting = {}, inView = false) {
@@ -125,6 +140,10 @@ class Actor {
 		return (nextAction.verb === MOVE) ? false : true;
 	}
 
+	wait() {
+		this.healPools();
+	}
+
 	//---- Movement
 
 	move(x, y) {
@@ -143,8 +162,15 @@ class Actor {
 	}
 
 	wound(n) {
-		this.hp -= parseInt(n, 10);
+		return this.heal(n * -1);
+	}
+
+	heal(n) {
+		const originalHp = this.hp;
+		this.hp += parseInt(n, 10);
+		this.hp = Math.min(this.hp, this.hpMax);
 		this.checkDeath();
+		return this.hp - originalHp;
 	}
 
 	dead() {
@@ -159,7 +185,162 @@ class Actor {
 		}
 	}
 
+	//---- Healing
+
+	healPools() {
+		this.healPool(this.getRandomPoolKey());
+	}
+
+	healPool(poolKey, amount = 1) {
+		const a = this.getAbilityReadiedAmounts();
+		const max = this[poolKey + 'Max'];
+		if (a[poolKey] + this[poolKey] + amount <= max) {
+			this[poolKey] += amount;
+		} else {
+			if (this.isHero) {
+				console.log('No space to heal', poolKey, this);
+			}
+		}
+	}
+
+	damagePool(poolKey, amount = 1) {
+		this[poolKey] -= amount;
+		this[poolKey] = Math.max(0, this[poolKey]);
+	}
+
+	//---- Abilities
+
+	hasAbility(abilityKey) {
+		return Boolean(this.abilities[abilityKey]);
+	}
+
+	addAbility(abilityKey, abilityData) {
+		if (this.abilityList.length >= this.maxAbilities) {
+			return false;
+		}
+		if (this.hasAbility(abilityKey)) {
+			console.warn('Cannot add ability twice - would override');
+			return;
+		}
+		// TODO: move to Activity class?
+		const ability = JSON.parse(JSON.stringify(abilityData));
+		this.abilities[abilityKey] = ability;
+		ability.isReadied = false;
+		ability.key = abilityKey;
+		this.abilityList.push(abilityKey);
+		return ability;
+	}
+
+	getAbilityByIndex(i) {
+		const key = this.abilityList[i];
+		return this.abilities[key];
+	}
+
+	getAbilityReadiedAmounts() {
+		const a = { hp: 0, ap: 0, bp: 0, ep: 0 };
+		this.abilityList.forEach((abilityKey) => {
+			const ability = this.abilities[abilityKey];
+			Actor.loopOverAbilityCosts(ability, (costKey, val) => {
+				if (ability.isReadied) {
+					a[costKey] += val;
+				}
+			});
+		});
+		return a;
+	}
+
+	canReadyAbility(ability) {
+		if (ability.isReadied) { return false; }
+		let canReady = true;
+		Actor.loopOverAbilityCosts(ability, (costKey, val) => {
+			const poolAmount = this[costKey];
+			if (val > poolAmount) {
+				canReady = false;
+			}
+		});
+		return canReady;
+	}
+
+	readyAbilityByIndex(i) {
+		const ability = this.getAbilityByIndex(i);
+		if (!ability) { return false; }
+		if (!this.canReadyAbility(ability)) { return false; }
+		Actor.loopOverAbilityCosts(ability, (costKey, val) => {
+			this[costKey] -= val;
+		});
+		ability.isReadied = true;
+		return ability;
+	}
+
+	activateAbilities(eventName) {
+		const triggeredAbilities = this.getTriggeredAbilities(eventName);
+		let effects = [];
+		triggeredAbilities.forEach((ability) => {
+			ability.isReadied = false;
+			effects = effects.concat(ability.effects);
+		});
+		return effects;
+	}
+
+	getTriggeredAbilities(eventName) {
+		const triggeredAbilities = [];
+		this.abilityList.forEach((abilityKey) => {
+			const ability = this.abilities[abilityKey];
+			if (ability.isReadied && ability.activateOn === eventName) {
+				triggeredAbilities.push(ability);
+			}
+		});
+		return triggeredAbilities;
+	}
+
+	static loopOverAbilityCosts(ability, fn) {
+		const costs = Object.keys(ability.readyCost);
+		costs.forEach((key) => {
+			fn(key, parseInt(ability.readyCost[key], 10));
+		});		
+	}
+
+	static getAbilityEffectsString(ability) {
+		let arr = [];
+		ability.effects.forEach((effect) => {
+			const words = (typeof effect === 'string') ? [effect] : Object.keys(effect);
+			arr = arr.concat(words);
+		});
+		return arr.join(', ');
+	}
+
+	static getAbilityDescriptionHtml(ability) {
+		let desc = 'Ready with';
+		Actor.loopOverAbilityCosts(ability, (costKey, val) => {
+			desc += ' ' + val + ' ' + costKey.toUpperCase();
+		});
+		const effects = Actor.getAbilityEffectsString(ability);
+		desc += `</br>Activates on: ${ability.activateOn}<br />Causes: ${effects}`;
+		return desc + ' ' + ability.description;
+	}
+
+	//---- Experience
+
+	gainRandomPoolMax() {
+		const key = this.getRandomPoolKey() + 'Max';
+		this[key] += 1;
+	}
+
+	gainRandomAbility(abilitiesData) {
+		const abilityKeys = Object.keys(abilitiesData);
+		let abilityKey = random.pickOne(abilityKeys);
+		let attempts = 100;
+		while (this.hasAbility(abilityKey) && attempts--) {
+			abilityKey = random.pickOne(abilityKeys);
+		}
+		this.addAbility(abilityKey, abilitiesData[abilityKey]);
+	}
+
 	//---- Gets
+
+	getRandomPoolKey() {
+		return random.pickOne(['ap', 'bp', 'ep']);
+	}
 
 	getMaxSenseRange() {
 		return this.sightRange;
@@ -178,6 +359,21 @@ class Actor {
 		}
 		return null; // ?
 	}
+
+	getWeaponDamage() {
+		if (!this.isHero) {
+			return 1; // TODO: change this so there is some kind of natural damage for monsters
+		}
+		let highestDamage = 0;
+		this.inventory.loopOverContents((item) => {
+			if (item.damage > highestDamage) {
+				highestDamage = item.damage;
+			}
+		});
+		return highestDamage;
+	}
+
+	//---- Sets
 
 	setCoordinates(x, y) {
 		this.x = parseInt(x, 10);

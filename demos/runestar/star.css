@@ -16,7 +16,7 @@
 html, body {
 	margin: 0;
 	padding: 0;
-	background: #080600;
+	background: #030100;
 	color: #ddd;
 	font-family: 'AppleII', monospace;
 	width: 100%;
@@ -25,6 +25,11 @@ html, body {
 
 body {
 	display: flex;
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
 }
 
 .github-banner {
@@ -45,7 +50,8 @@ h1 {
 }
 
 .rote {
-	display: grid;
+	/* display: grid; */
+	display: none;
 	grid-template-columns: [left] 840px [right] auto;
 	grid-template-rows: [top] 1fr [middle] 6fr [bottom] 4fr;
 	grid-template-areas:
@@ -56,7 +62,7 @@ h1 {
 	grid-gap: 1%;
 	padding: 1%;
 	box-sizing: border-box;
-	
+	text-align: left;
 	
 	width: 100%;
 	height: 100%;
@@ -75,7 +81,7 @@ h1 {
 		border: solid 1px rgba(255, 255, 255, 0.1);
 	}
 	#display.damaged canvas {
-		border: solid 1px red;
+		border: solid 1px #f25;
 	}
 
 #console {
@@ -111,17 +117,39 @@ h1 {
 	#console ul > li:nth-last-child(4) { opacity: 0.5; }
 
 .plot {
-	color: #ee9;
+	color: #df2;
 }
 .tip {
-	color: #0ff;
+	color: #39c;
 }
 
 #interface {
 	grid-area: interface;
 	/* border: solid 1px rgba(255, 255, 255, 0.1); */
-	padding: 1em;
+	padding: 0 1em;
 }
+
+.stats {
+	display: block;
+	margin: 0 0 1em 0;
+	padding: 0;
+	list-style: none;
+}
+	.stats li {
+		margin: 0 0 0.5em 0;
+		padding: 0;
+	}
+	.stats .pool {
+		display: inline-block;
+		letter-spacing: 0.3em;
+		margin-left: 1em;
+	}
+
+.hp .pool, .hp-pool { color: #c47; }
+.ap .pool, .ap-pool { color: #c74; }
+.bp .pool, .bp-pool { color: #47c; }
+.ep .pool, .ep-pool { color: #7c4; }
+.dead { color: #c47; }
 
 #controls {
 	grid-area: controls;
@@ -129,5 +157,122 @@ h1 {
 	border-width: 1px 0 0 1px;
 	padding: 1em;
 	opacity: 0.5;
-	font-size: 90%;
+	font-size: 80%;
+	overflow-y: auto;
+}
+
+.abilities {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin: 1em 0;
+	padding: 0;
+}
+	.abilities li {
+		display: inline-block;
+		width: 30%;
+		min-width: 14em;
+		min-height: 1.1em;
+		padding: 0.5em;
+		margin: 0 0.5em 0.5em 0;
+		border: solid 1px rgba(255, 255, 255, 0.3);
+	}
+	.abilities li .description {
+		display: none;
+		position: absolute;
+		background-color: #090701;
+		border: solid 1px rgba(255, 255, 255, 0.3);
+		padding: 1em;
+		margin-left: 3em;
+		max-width: 16em;
+		font-size: 80%;
+	}
+	.abilities li:hover .description {
+		display: block;
+	}
+	.abilities li.none {
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+	.abilities li.ready {
+		border-color: rgba(255, 255, 255, 0.5);
+	}
+
+.score {
+	float: right;
+	opacity: 0.5;
+}
+
+.seed {
+	opacity: 0.1;
+	font-size: 50%;
+}
+
+
+.splash {
+	display: block;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	transform: scale(0);
+	text-align: center;
+	overflow: hidden;
+	opacity: 0;
+	transition: all 1.3s;
+}
+.splash pre {
+	width: 30em;
+	margin: 10vh auto;
+	text-align: left;
+	color: #fd2;
+}
+.splash div {
+	margin: 1em 0;
+}
+.splash .tip {
+	margin: 10vh 0;
+}
+.credits {
+	margin: 20vh 0;
+	font-size: 80%;
+	opacity: 0.2;
+	line-height: 1.4em;
+	transition: opacity 2s;
+}
+.credits:hover {
+	opacity: 1.0;
+}
+.credits a {
+	color: #69c;
+}
+.links {
+	font-size: 80%;
+}
+.links a {
+	display: block;
+	color: #036;
+	padding: 0.5em;
+	opacity: 0.5;
+	transition: opacity 0.1s;
+}
+.links a:hover {
+	opacity: 1;
+}
+
+
+
+.rote-state-splash .splash {
+	display: block;
+	width: 100%;
+	height: 100%;
+	transform: scale(1);
+	opacity: 1.0;
+}
+.rote-state-game .splash {
+	width: 0;
+	height: 0;
+}
+
+.rote-state-game .rote {
+	display: grid;
 }

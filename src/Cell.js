@@ -2,8 +2,8 @@ class Cell {
 	constructor(options = {}) {
 		this.character = options.character || ' ';
 		this.discovered = false;
-		this.color = '#777';
-		this.background = '#222';
+		this.color = options.color || '#777';
+		this.background = options.background || '#222';
 		this.passability = false; // TODO: handle this different?
 	}
 
