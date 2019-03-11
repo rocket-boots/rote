@@ -16,12 +16,13 @@ A demo containing all of the Rot.js tutorial functionality
    * Only ~50 lines of javascript, ~25 lines of html, and ~40 lines of css
    * [View the code](demos/pedro/)
 
-### "Runestar: Origins" - _work in progress_
+### "Runestar: Origins" - released as part of 7DRL 2019
 
-   * [Runestar Readme](demos/runestar/README.md)
-   * https://rocket-boots.github.io/rote/demos/runestar/
+   * New repo: https://github.com/deathraygames/runestar-origins
+   * Original... 
+       * repo under _demos_: https://rocket-boots.github.io/rote/demos/runestar/
+       * [Original Runestar Readme](demos/runestar/README.md)
    * Uses rote v0.2.0
-   * [View the code](demos/runestar/)
 
 ## Definitions (WIP)
 
@@ -65,7 +66,7 @@ Other improvements:
 
 ### Actual game
 
-- [ ] Props (extend Items)
+- [x] Props (extend Items)
 - [ ] Blocks
 - [ ] Options menu
 - [ ] Engine work
