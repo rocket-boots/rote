@@ -57,9 +57,12 @@ class Item {
 	}
 
 	removeRequirements(action = {}) {
+		if (!action.requires) { return; }
 		action.requires.forEach((requirement) => {
 			const typeKey = requirement.item;
-			this.inventory.removeType(typeKey);
+			if (typeKey) {
+				this.inventory.removeType(typeKey);
+			}
 		});
 	}
 
