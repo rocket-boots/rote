@@ -258,6 +258,13 @@ class Level {
 		}
 	}
 
+	resolveRoundEffects() {
+		this.actors.forEach((actor) => {
+			const roundEffects = actor.activateAbilities('round');
+			this.doEffects(roundEffects, actor, actor);
+		});
+	}
+
 	resolveCombatEffects(attacker, defender) {
 		let attackEffects = attacker.activateAbilities('attack');
 		let defendEffects = defender.activateAbilities('attacked');
@@ -388,6 +395,26 @@ class Level {
 		moveY = moveY / (moveY === 0 ? 1 : Math.abs(moveY));
 		// console.log('pushing', pushee.name, moveX, moveY);
 		pushee.move(moveX, moveY);
+	}
+
+	getActorsInitiativeOrdered() {
+		const randomActors = random.shuffle(this.actors);
+		const firstActors = [];
+		let i = randomActors.length - 1;
+		while (i--) {
+			const actor = randomActors[i];
+			if (actor.initiativeBoost > 0) {
+				firstActors.push(actor);
+				randomActors.splice(i, 1);
+			}
+		}
+		return firstActors.concat(randomActors);
+	}
+
+	coolOffInitiativeBoosts() {
+		this.actors.forEach((actor) => {
+			actor.initiativeBoost = 0;
+		});
 	}
 
 	// Generation

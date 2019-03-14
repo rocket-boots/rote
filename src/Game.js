@@ -1,5 +1,5 @@
 const ROT = require('rot-js');
-const domReady = require('./ready');
+const ready = require('./ready');
 const Display = require('./Display');
 const Level = require('./Level');
 const Actor = require('./Actor');
@@ -352,8 +352,9 @@ class Game {
 		// TODO: advance time
 		// Do actions for all actors
 		const level = this.getActiveLevel();
-		// "Initiative" is random
-		const actors = random.shuffle(level.actors);
+		level.resolveRoundEffects();
+		const actors = level.getActorsInitiativeOrdered();
+		level.coolOffInitiativeBoosts();
 		actors.forEach((actor) => {
 			actor.planAction(level, this.hero);
 			this.advanceActor(actor);
@@ -458,8 +459,8 @@ class Game {
 
 	//---- System
 
-	ready(callback) {
-		domReady(() => {
+	ready(callback, fonts = []) {
+		ready(() => {
 			if (this.loadingPromise instanceof Promise) {
 				this.loadingPromise
 					.then(() => { callback(); })
@@ -467,7 +468,7 @@ class Game {
 			} else {
 				callback();
 			}
-		});
+		}, fonts);
 		// TODO: return a promise so can be used async
 	}
 

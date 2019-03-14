@@ -310,13 +310,15 @@ class Actor {
 	}
 
 	static getAbilityDescriptionHtml(ability) {
-		let desc = 'Ready with';
+		let ready = 'Ready with';
 		Actor.loopOverAbilityCosts(ability, (costKey, val) => {
-			desc += ' ' + val + ' ' + costKey.toUpperCase();
+			ready += ' ' + val + ' ' + costKey.toUpperCase();
 		});
 		const effects = Actor.getAbilityEffectsString(ability);
-		desc += `</br>Activates on: ${ability.activateOn}<br />Causes: ${effects}`;
-		return desc + ' ' + ability.description;
+		return `<div class="ability-description">${ability.description}</div>
+		<div class="ability-ready-with">${ready}</div>
+		<div class="ability-activates-on">Activates on: ${ability.activateOn}</div>
+		<div class="ability-effects">Causes: ${effects}</div>`;
 	}
 
 	//---- Experience
