@@ -1,30 +1,79 @@
 # rote.js
 
-_**RO**guelike **T**ools, **E**xtended_ -- a library containing tools to help make a Rogue-like game; built off of [rot.js](https://github.com/ondras/rot.js).
+_**RO**guelike **T**oolkit, **E**xtended_ -- a library containing tools to help make a [traditional Rogue-like](http://www.roguebasin.com/index.php?title=Berlin_Interpretation) game; built off of the wondeful [rot.js toolkit](https://github.com/ondras/rot.js) by ondras.
 
-Current codebase is in an alpha stage. See development plan below. The plan and the code will change
-without warning at this stage.
+Current codebase is in an alpha stage, so the development plan and the code could change
+without warning, but it should be usable.
 
-## Demos
+## How to Use
 
-### "Pedro"
+### (1) Get rote's Javascript
 
-A demo containing all of the Rot.js tutorial functionality
+* Download [one of the distribution builds](tree/master/dist) (a single `js` file)
+* or `npm install rocket-boots/rote#master`
+* or get all the code and do whatever you want with it
+   * Clone or downlad the latest code
+   * [Download the released versions](releases)
 
-   * https://rocket-boots.github.io/rote/demos/pedro/
-   * Uses rote v0.1.0
-   * Only ~50 lines of javascript, ~25 lines of html, and ~40 lines of css
-   * [View the code](demos/pedro/)
+### (2) Include in your project
 
-### "Runestar: Origins" - released as part of 7DRL 2019
+For HTML/webpage-based games, just include the rote code before your game code...
 
-   * New repo: https://github.com/deathraygames/runestar-origins
-   * Original... 
-       * repo under _demos_: https://rocket-boots.github.io/rote/demos/runestar/
-       * [Original Runestar Readme](demos/runestar/README.md)
-   * Uses rote v0.2.0
+Example HTML:
+```html
+<script src="rote-0.3.0.js"></script>
+<script src="my-awesome-roguelike.js"></script>
+...
+<section id="display"></section>
+```
 
-## Definitions (WIP)
+### (3) Create your game
+
+In the browser the `rote` object will be a global object (i.e., `window.rote`) which contains a `Game` class, among others. To make your game, just do...
+
+```js
+const game = new rote.Game({
+   id: 'display', // which element should be used for the display
+   consoleId: 'console', // which element should be used for the game's log
+   data: {
+      monsters: 'data/monsters.json',
+      items: 'data/items.json',
+      props: 'data/props.json',
+      levels: 'data/levels.json',
+      abilities: 'data/abilities.json',
+      playlist: 'data/playlist.json',
+      dungeon: 'data/dungeon.json'
+   } 
+});
+```
+### (4) Start it up
+
+```js
+const fontFamily = 'Fix15MonoBold'; // good alternatives: "AppleII" or "White Rabbit"
+
+rote.ready(() => { // Runs when everything is loaded: DOM content, json data, fonts
+   // Make a random seed number if your dungeon should be random
+   const seed = rote.random.makeSeed();
+   // Connect to browser DOM for display
+   game.createDisplay({
+      width: 60,
+      height: 30,
+      fontSize: 20,
+      fontFamily: fontFamily 
+   });
+   // Build the game world
+   game.createLevels(game.data.dungeon, seed);
+   ...
+   // Create player character
+   ...
+   // Create npcs, items
+   ...
+	// Start the game
+	g.start();
+}, [fontFamily]);
+```
+
+## Definitions
 
 In the code you'll see these words:
 
@@ -37,71 +86,42 @@ In the code you'll see these words:
 - Map
 - Prop - a permanent/semi-permanent fixture in the map, such as a door, podium, etc.
 
-## Development Plan
+## Demos
 
-### Demo
+### Pedro
 
-- [x] Rot.js tutorial, part 1
-- [x] Rot.js tutorial, part 2
-- [x] Level work
-- [x] Basic Scheduler
-- [x] Rot.js tutorial, part 3
+Pedro is a simple demo containing all of the functionality from the [Rot.js tutorial](http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial). Only ~50 lines of javascript, ~25 lines of html, and ~40 lines of css.
 
-[Further improvements](http://www.roguebasin.com/index.php?title=Rot.js_tutorial,_part_3):
+   * Playable: https://rocket-boots.github.io/rote/demos/pedro/
+   * Uses rote v0.1.0
+   * [View the code in the demos folder](demos/pedro/)
 
-- [x] "Player can crash the game by moving onto Pedro's cell. Not only this is currently allowed, but it also disrupts Pedro's pathfinding (which expects the path to be at least two cells long)." _(doesn't seem to be happening in this implementation)_
-- [x] "The Game.map structure should probably store positions of beings (player, Pedro) as well."
-- [x] "It would be comfortable for users to increase the set of allowed navigation keys (number keys, vi keys)."
-- [ ] "When a box is inspected, its appearance may change (to make it easier for player to distinguish between visited and unvisited boxes)."
+### Runestar: Origins
 
-Other improvements:
+Runestar is the first fully playable game made with rote (v0.2.0). It was created as part of [7DRL 2019](https://itch.io/jam/7drl-challenge-2019).
 
-- [x] Screen-centering
-- [x] Alternate movement (8-directional vi: hjkl+yubn, 8-directional wasd+qezc)
-- [x] Cell data structure
-- [x] Fog of war / exploration
-- [x] Basic circular FOV
-- [x] Basic State system tied to keyboard controls
-- [x] Console improvements
+   * Repo: https://github.com/deathraygames/runestar-origins
+   * Uses rote v0.2.0
 
-### Actual game
+## Development
 
-- [x] Props (extend Items)
-- [ ] Blocks
-- [ ] Options menu
-- [ ] Engine work
-- [ ] Action-duration scheduler
-- [ ] Hero Inventory UI
-- [ ] Data-based level generation
-- [ ] Data-based monster generation
-- [ ] Data-based item generation
-- [ ] Data-based props generation
-- [ ] Status effects
-- [ ] Basic bump combat
-- [ ] Basic 8-dir ranged combat
-- [ ] Hero health, death
-- [ ] Different AI behaviors
-- [ ] Level travel
-- [ ] Level/map seeds
-- [ ] Doors (props), logical door placement
-- [ ] States for items, with different colors or characters
-- [ ] Character sheet
-- [ ] Save/Loading
-- [ ] Animation loop
-- [ ] Animation for combat
-- [ ] FOV based on environment
-- [ ] Mouse capabilities
-- [ ] Key re-mapping
-- [ ] Lighting system (allows hiding, stealth)
-- [ ] Smooth screen centering
-- [ ] Zoom map
-- [ ] Chunking levels, Zones
-- [ ] Moddable Combat system
-- [ ] Moddable Magic system
-- [ ] Item identification
-- [ ] Optimize webpack build size
-- [ ] Sound effects
-- [ ] Music
-- [ ] Hero AI mode (auto-exploring)
-- [ ] Advanced state system with moddable enter/leave methods
-- [ ] Allow text input via input text field in Console
+Development will likely be slow and tied to 7DRL competitions, but there is still a [rough development plan](/docs/development-plan.md). 
+
+Source code is in the `src` folder, and it organized by individual classes (capitalized filenames), and utilities (e.g. `random`, `geometer`). Webpack is used to put it all together into single `js` files named by version (see `dist` folder).
+
+### Dependencies
+
+* rot.js is the primary dependency and is used throughout the library
+* fontfaceobserver is used to monitor when a webfont is loaded
+* webpack and webpack-cli are used only for development to combine all the `js` files into a single file
+
+### Want to contribute?
+
+Just create issues and submit pull requests.
+
+## Other Resources for Web Roguelike Development
+
+* A few great free-to-use fonts: https://github.com/deathraygames/runestar-origins/tree/master/fonts
+   * Fix15Mono-Bold from Allure (SIL Open Font License) and LambdaHack - nicely square-shaped, so is great for ASCII tiles
+   * Apple II - retro pixelated 8x8 style
+   * White Rabbit by Matthew Welch
