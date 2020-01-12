@@ -9,6 +9,9 @@
 
 ### Gameplay
 
+- [ ] Basic FOV http://ondras.github.io/rot.js/manual/#fov
+- [ ] Basic lighting http://ondras.github.io/rot.js/manual/#lighting
+- [ ] Auto-Time-Advance
 - [ ] States for items, with different colors or characters
 - [ ] Inventory open/close (e.g., chests)
 - [ ] Basic bump combat
@@ -16,9 +19,9 @@
 - [ ] Basic 8-dir ranged combat
 - [ ] FOV based on environment
 - [ ] Lighting system (allows hiding, stealth)
-- [ ] Blocks (`#`, `%`)
+- [ ] Blocks (`#`, `%`) as entities
 - [ ] Background (blocks? void?)
-- [ ] Action-duration scheduler
+- [ ] Action-duration scheduler - http://ondras.github.io/rot.js/manual/#timing
 - [ ] Status effects: give (monsters, abilities)
 - [ ] Status effects: get (they do things)
 - [ ] Different AI behaviors
@@ -44,6 +47,9 @@
 - [ ] Base seed
 - [ ] Level/map seeds (added to base seed)
 - [ ] Static map seeds
+- [ ] Maze http://ondras.github.io/rot.js/manual/#map/maze
+- [ ] Cellular http://ondras.github.io/rot.js/manual/#map/cellular
+- [ ] 
 - [ ] Chance-based (%) generation for items, props
 - [ ] Chance-based (%) monsters
 - [ ] Weighted generation for items, props
@@ -60,6 +66,7 @@
 
 ### Beauty
 
+- [ ] Graphics - http://ondras.github.io/rot.js/manual/#tiles
 - [ ] Animation loop
 - [ ] Animation for combat
 - [ ] Smooth screen centering
@@ -74,6 +81,7 @@
 
 ### Tech
 
+- [ ] Remove runestar demo from repo
 - [ ] Engine work
 - [ ] Option for using as an ES module
 - [ ] Optimize webpack build size

@@ -93,7 +93,7 @@ In the code you'll see these words:
 Pedro is a simple demo containing all of the functionality from the [Rot.js tutorial](http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial). Only ~50 lines of javascript, ~25 lines of html, and ~40 lines of css.
 
    * Playable: https://rocket-boots.github.io/rote/demos/pedro/
-   * Uses rote v0.1.0
+   * Uses rote v0.3.0
    * [View the code in the demos folder](demos/pedro/)
 
 ### Runestar: Origins
