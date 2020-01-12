@@ -7,37 +7,45 @@ const Item = require('./Item');
 const Keyboard = require('./KeyboardListener');
 const MusicBox = require('./MusicBox');
 const Console = require('./Console');
-const random = require('./random');
 
+const INIT_STATE = 'INIT';
 const MAIN_GAME_STATE = 'GAME';
 const SPLASH_STATE = 'SPLASH';
+const OFF_STATE = 'OFF';
 
 class Game {
 	constructor(options) {
-		const { id, consoleId, data } = options;
+		const { id, consoleId, data, customEffects,	haveSplash,	fontFamilies } = options;
 		this.id = id;
 		this.displayContainer = document.getElementById(id || 'display');
 		this.console = new Console({ id: consoleId });
 		this.display = null;
+		this.haveSplash = Boolean(haveSplash);
+		this.fontFamilies = fontFamilies || [];
 		this.activeLevelIndex = 0;
 		// The generated levels
 		this.levels = [];
 		// Reference data on prototypical "things" (monsters, items)
-		this.data = { monsters: {}, items: {}, props: {} };
+		this.data = {
+			monsters: {},
+			items: {},
+			props: {},
+			playlist: [],
+		};
 		// The main actor
 		this.hero = null; // player character / player actor
 		// Guts
 		this.scheduler = new ROT.Scheduler.Simple();
 		this.engine = null;
 		this.keyboard = null;
-		this.state = 'INIT';
-		this.states = ['INIT', SPLASH_STATE, MAIN_GAME_STATE];
+		this.state = INIT_STATE;
+		this.states = new Set([INIT_STATE, SPLASH_STATE, MAIN_GAME_STATE, OFF_STATE]);
 		// this.setupEngine();
 		this.loadingPromise = null;
 		this.console.setup();
 		this.loadData(data);
 		this.hooks = {};
-		this.customEffects = { ...options.customEffects };
+		this.customEffects = { ...customEffects };
 	}
 
 	setupEngine() {
@@ -275,7 +283,7 @@ class Game {
 		} else if (Game.canBumpSwitch(actor, blocker)) {
 			actor.moveTo(x, y);
 			return { x, y, moved: true };
-			// TODO: allow pushes based on authority
+			// TODO: allow pushes based on authority/size
 		} else { // just blocked
 			return { x, y, moved: false };
 		}		
@@ -339,6 +347,8 @@ class Game {
 		}
 		if (thing.portable) {
 			actor.queueAction('pickup', { target: thing });
+		} else if (thing.hasAction('open')) {
+			actor.queueAction('open', { target: thing });
 		} else if (thing.hasAction('use')) {
 			actor.queueAction('use', { target: thing });
 		} else if (thing.hasAction('descend') || thing.hasAction('ascend')) {
@@ -378,6 +388,7 @@ class Game {
 			if (verb === 'move') { console.log(actor.name + ' ' + verb); }
 			else { console.log(actor.name, verb, action); }
 		}
+		let outcome = {};
 		let message = '';
 		switch (verb) {
 			case 'move':
@@ -389,11 +400,12 @@ class Game {
 				}
 			break;
 			case 'use':
-				const outcome = level.useThing(actor, 'use', target);
+				outcome = level.useThing(actor, 'use', target);
 				message = outcome.message;
 			break;
 			case 'open':
-				message = level.useThing(actor, 'open', target);
+				outcome = level.useThing(actor, 'open', target);
+				message = outcome.message;
 			break;
 			case 'teleport':
 				message = `${actor.name} travels to a new location: `;
@@ -422,7 +434,10 @@ class Game {
 				}
 			break;
 		}
-		
+		if (typeof message !== 'string') {
+			console.error('Unknown message from doing action', verb);
+			message = 'ERROR';
+		}
 		this.print(message);
 	}
 
@@ -459,7 +474,9 @@ class Game {
 
 	//---- System
 
-	ready(callback, fonts = []) {
+	ready(callback, fonts = []) { // TODO: remove fonts param?
+		const fontFamiliesToLoad = [ ...fonts ].concat(this.fontFamilies);
+		console.log(fontFamiliesToLoad);
 		ready(() => {
 			if (this.loadingPromise instanceof Promise) {
 				this.loadingPromise
@@ -468,7 +485,7 @@ class Game {
 			} else {
 				callback();
 			}
-		}, fonts);
+		}, fontFamiliesToLoad);
 		// TODO: return a promise so can be used async
 	}
 
@@ -476,14 +493,14 @@ class Game {
 		this.setupEngine();
 		this.setupKeyboard();
 		this.setupMusic();
-		this.setStateDetect(SPLASH_STATE);
-		// this.setState(MAIN_GAME_STATE);
+		const startState = (this.haveSplash) ? SPLASH_STATE : MAIN_GAME_STATE;
+		this.setStateDetect(startState);
 		// TODO: start graphics loop
 		this.draw();
 	}
 
 	stop() {
-		this.setState('OFF');
+		this.setState(OFF_STATE);
 		this.removeKeyboard();
 		// TODO: stop graphics loop
 	}
@@ -495,11 +512,15 @@ class Game {
 			return (typeof obj[key] === 'object') ? obj[key] : obj;
 		}
 		for (let key in data) {
-			const p = fetch(data[key])
-				.then(parseJson)
-				.then((obj) => fixInnerObject(obj, key))
-				.then((obj) => { this.setData(key, obj); });
-			promises.push(p);
+			if (typeof data[key] === 'string') {
+				const p = fetch(data[key])
+					.then(parseJson)
+					.then((obj) => fixInnerObject(obj, key))
+					.then((obj) => { this.setData(key, obj); });
+				promises.push(p);
+			} else {
+				this.setData(key, data[key]);
+			}
 		}
 		this.loadingPromise = Promise.all(promises); // .then((resp) => { console.log(resp); });
 		return this.loadingPromise;
@@ -578,7 +599,9 @@ class Game {
 	}
 
 	setState(state) {
-		console.log('Setting state:', state);
+		const isLegitState = this.states.has(state);
+		const consoleMethod = (isLegitState) ? 'log' : 'warn';
+		console[consoleMethod]('Setting state:', state);
 		const prefix = 'rote-state-';
 		this.state = state;
 		// const body = document.getElementsByClassName('rote-state')[0];
@@ -589,6 +612,11 @@ class Game {
 		location.hash = state.toLowerCase();
 		this.keyboard.setState(state);
 	}
+
+	setMainGameState() {
+		this.setState(MAIN_GAME_STATE);
+	}
+
 }
 
 module.exports = Game;

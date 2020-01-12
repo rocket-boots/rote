@@ -29,7 +29,7 @@ class Actor {
 		this.maxMovement = this.isHero ? 1.42 : 1;
 		this.sightRange = (typeof options.sightRange === 'number') ? options.sightRange : 6;
 		this.target = null;
-		this.aggro = options.aggro || 0;
+		this.aggro = options.aggro || 0; // Level will set this to 100 for monsters
 		// stats
 		this.hp = (options.hp || typeof options.hp === 'number') ? parseInt(options.hp, 10) : 2;
 		this.hpMax = this.hp;

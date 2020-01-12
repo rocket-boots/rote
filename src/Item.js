@@ -15,11 +15,11 @@ class Item {
 			size: options.inventorySize || 0
 		});
 		this.isWeapon = Boolean(options.weapon);
-		this.damage = parseInt(options.weapon, 10);
+		this.damage = parseInt(options.weapon, 10) || 0;
 		this.illumination = options.illumination || 0;
 		this.portable = (typeof options.portable === 'boolean') ? options.portable : true;
 		this.containedIn = null;
-		this.actions = { ...options.on, ...options.actions };
+		this.actions = { ...options.on, ...options.actions }; // TODO: do we need the "on" alias?
 		if (options.use) {
 			this.actions.use = options.use;
 		}

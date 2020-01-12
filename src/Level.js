@@ -222,6 +222,9 @@ class Level {
 
 	useThing(actor, actionName, thing) {
 		const outcome = thing.action(actionName, actor);
+		if (typeof outcome !== 'object') {
+			console.warn('action returns outcome that is not object', actionName, thing, outcome);
+		}
 		this.doEffects(outcome.effects, actor, actor);
 		return outcome;
 	}
@@ -419,23 +422,29 @@ class Level {
 
 	// Generation
 
+	generateItem(levelItem = {}, Class, seed = 0, types = [], background = undefined) {
+		const { x, y } = this.findRandomFreeCell(seed, levelItem.clearing);
+		const itemTypeOptions = (levelItem.type && types[levelItem.type]) ? types[levelItem.type] : {};
+		const itemOptions = {
+			x, y,
+			...itemTypeOptions,
+			...levelItem
+		};
+		if (background) { itemOptions.background = background; }
+		const item = new Class(itemOptions);
+		return item;
+	}
+
 	generateItems(options = {}, itemTypes = {}) {
 		let seed = this.seed + 200;
 		let { items = [] } = options;
 
 		const arr = [];
 		items.forEach((levelItem) => {
-			const quantity = levelItem.quantity || 1;
+			const quantity = (typeof levelItem.quantity === 'number') ? levelItem.quantity : 1;
 			// TODO: handle weight, etc.
 			for (let i = 0; i < quantity; i++) {
-				const { x, y } = this.findRandomFreeCell(++seed, levelItem.clearing);
-				const itemTypeOptions = (levelItem.type && itemTypes[levelItem.type]) ? itemTypes[levelItem.type] : {};
-				const itemOptions = {
-					x, y,
-					...itemTypeOptions,
-					...levelItem
-				};
-				const item = new Item(itemOptions);
+				const item = this.generateItem(levelItem, Item, ++seed, itemTypes);
 				arr.push(item);
 			}
 		});
@@ -450,28 +459,19 @@ class Level {
 		const arr = [];
 		props.forEach((levelProp) => {
 			const quantity = (typeof levelProp.quantity === 'number') ? levelProp.quantity : 1;
-			// console.log(levelProp);
 			// TODO: handle weight, etc.
 			for (let i = 0; i < quantity; i++) {
-				const { x, y } = this.findRandomFreeCell(++seed, levelProp.clearing);
-				const propTypeOptions = (levelProp.type && propTypes[levelProp.type]) ? propTypes[levelProp.type] : {};
-				const propOptionsParam = {
-					x, y, background,
-					...propTypeOptions,
-					...levelProp
-				};
-				const prop = new Prop(propOptionsParam);
+				const prop = this.generateItem(levelProp, Prop, ++seed, propTypes, background);
 				arr.push(prop);
 			}
 		});
-		// console.log('generateProps', arr);
-		this.props = arr;
-		return this.props;
+		return arr;
 	}
 
 	generateActors(options = {}, refData = {}) {
-		let seed = this.seed + 999;
-		const { monsterSpawn, monsters } = options;
+		console.log('generateActors', options);
+		let seed = this.seed + 999; // ?
+		const { monsterSpawn, monsters = [] } = options;
 		const monsterTypes = refData.monsters;
 		const depth = options.levelIndex;
 		const availableMonsters = monsters.filter((levelMonster) => {
@@ -484,7 +484,9 @@ class Level {
 			}
 		});
 		const hasMonstersWithWeights = Object.keys(availableMonsterWeights).length > 0;
-		const totalMonsterSpawnQuantity = 10; // TODO: parse monsterSpawn into random number
+		const monsterSpawnNumber = (monsterSpawn === undefined) ? 10 : Number(monsterSpawn);
+		// TODO: parse monsterSpawn into random number using dice notation, e.g. "1d6"
+		const totalMonsterSpawnQuantity = monsterSpawnNumber;
 		const actors = [];
 		// Create monsters with fixed quantities
 		// Note: this could exceed the total quantity
