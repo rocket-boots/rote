@@ -8,7 +8,7 @@ Current codebase is in an alpha stage, so the code and the [development plan](/d
 
 ### (1) Get rote's Javascript
 
-Simply download [one of the distribution builds (a single `js` file) from the `dist` folder](tree/master/dist).
+Simply download [one of the distribution builds (a single `js` file) from the `dist` folder](dist).
 
 *OR* if you want to roll your own, you should be able to do `npm install rocket-boots/rote#master` if you're using node. If you just want to get all the code and do whatever you want with it, just clone or download the latest code, or [download the released versions](releases).
 
