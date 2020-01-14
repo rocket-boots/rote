@@ -18,7 +18,7 @@ For HTML/webpage-based games, just include the rote code before your game code, 
 
 Example HTML:
 ```html
-<script src="rote-0.3.0.js"></script>
+<script src="rote-0.4.0.js"></script>
 <script src="my-awesome-roguelike.js"></script>
 ...
 <section id="display"></section>
@@ -116,7 +116,7 @@ In the code you'll see these words:
 Pedro is a simple demo containing all of the functionality from the [Rot.js tutorial](http://www.roguebasin.roguelikedevelopment.org/index.php?title=Rot.js_tutorial). Less than 100 lines of javascript (most of it json data), ~27 lines of html, and ~75 lines of css.
 
    * Playable: https://rocket-boots.github.io/rote/demos/pedro/
-   * Uses rote v0.3.0
+   * Uses rote v0.4.0
    * [View the code in the demos folder](demos/pedro/)
 
 ### Runestar: Origins
