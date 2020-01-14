@@ -134,7 +134,7 @@ Source code is in the `src` folder, and it organized by individual classes (capi
 
 ### Dependencies
 
-A design goal is to keep the
+One design goal of this project is to keep the number of dependencies low.
 
 * **rot.js** is the primary dependency and is used throughout the library
 * **fontfaceobserver** is used to monitor when a webfont is loaded
@@ -146,7 +146,8 @@ Just create issues and submit pull requests.
 
 ## Other Resources for Web Roguelike Development
 
-* A few great free-to-use fonts: https://github.com/deathraygames/runestar-origins/tree/master/fonts
-   * Fix15Mono-Bold from Allure (SIL Open Font License) and LambdaHack - nicely square-shaped, so is great for ASCII tiles
-   * Apple II - retro pixelated 8x8 style
-   * White Rabbit by Matthew Welch
+A few great, free-to-use fonts are included in this repo: https://github.com/rocket-boots/rote/tree/master/fonts
+
+* Fix15Mono-Bold from Allure (SIL Open Font License) and LambdaHack - nicely square-shaped, so is great for ASCII tiles
+* Apple II - retro pixelated 8x8 style
+* White Rabbit by Matthew Welch
