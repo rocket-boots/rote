@@ -4,11 +4,11 @@
 
 ### Tutorials
 
-- [ ] Upgrade Pedro to 0.3.0
 - [ ] Create more guides, tutorials, etc.
 
 ### Gameplay
 
+- [ ] Look around action: show nearby things
 - [ ] Basic FOV http://ondras.github.io/rot.js/manual/#fov
 - [ ] Basic lighting http://ondras.github.io/rot.js/manual/#lighting
 - [ ] Auto-Time-Advance
@@ -49,7 +49,6 @@
 - [ ] Static map seeds
 - [ ] Maze http://ondras.github.io/rot.js/manual/#map/maze
 - [ ] Cellular http://ondras.github.io/rot.js/manual/#map/cellular
-- [ ] 
 - [ ] Chance-based (%) generation for items, props
 - [ ] Chance-based (%) monsters
 - [ ] Weighted generation for items, props
@@ -117,4 +116,4 @@
 - [x] Data-based monster generation
 - [x] Data-based item generation
 - [x] Data-based props generation
-
+- [x] Upgrade Pedro to 0.3.0
