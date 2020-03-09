@@ -100,10 +100,10 @@ rote.ready(() => { // Runs when everything is loaded: DOM content, json data, fo
 
 In the code you'll see these words:
 
-- Actor - a "character" in the game, e.g. Player Character, NPC
+- Actor - a "character" in the game, e.g., Player Character, NPC
 - Block
-- Cell - a node/space/coordinate on the map's grid; located by a unique x,y
-- Character - the letter or punctuation used to represent an item, actor, etc.
+- Cell - a node on the map's grid; located by a unique x,y; aka. space, coordinate, tile
+- Character - the letter or punctuation used to represent an item, actor, etc. e.g., `@`
 - Item - an object of some sort that can be picked up and dropped
 - Level - one "floor" of a dungeon
 - Map
@@ -146,8 +146,5 @@ Just create issues and submit pull requests.
 
 ## Other Resources for Web Roguelike Development
 
-A few great, free-to-use fonts are included in this repo: https://github.com/rocket-boots/rote/tree/master/fonts
-
-* Fix15Mono-Bold from Allure (SIL Open Font License) and LambdaHack - nicely square-shaped, so is great for ASCII tiles
-* Apple II - retro pixelated 8x8 style
-* White Rabbit by Matthew Welch
+* A few great, free-to-use fonts are included in this repo: https://github.com/rocket-boots/roguelike-fonts
+* https://www.reddit.com/r/roguelikedev/

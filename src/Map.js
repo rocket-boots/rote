@@ -3,41 +3,72 @@ const Cell = require('./Cell');
 const geometer = require('./geometer');
 const random = require('./random');
 
+const DIGGER_TYPE = 'digger';
+
 class Map {
 	constructor(options = {}) {
 		this.baseSeed = options.seed || 1;
 		this.seed = this.baseSeed;
 		this.color = options.color || '#777';
 		this.background = options.background || '#222';
-		this.type = options.type || 'digger';
+		this.type = options.type || DIGGER_TYPE;
 		this.rotMap = options.rotMap;
 		this.cells = {};
 		this.freeCells = [];
-		this.walls = options.walls || true;
+		this.walls = Boolean(options.walls) || Boolean(options.wallsCharacter);
 		this.wallsCharacter = options.wallsCharacter || '#'; // ▧
+		this.floorCharacter = options.floorCharacter || '.';
 		this.generate(options);
 	}
 
-	generate() {
-		this.cells = {};
-		// TODO: allow different types
+	generate(options = {}) {
+		const generators = options.generators || {};
+
+		if (typeof generators[this.type] === 'function') {
+			this.clearCells();
+			generators[this.type](this.seed, this, options);
+			return;
+		}
+
+		if (this.type === DIGGER_TYPE) {
+			this.generateDigger();
+			return;
+		}
+		if (this.type === ARENA_TYPE) {
+			this.generateArena(options.x, options.y);
+			return;
+		}
+		// TODO: handle other rot-js types
+
+		console.warn('Undefined map type:', this.type, generators);
+		this.generateArena(3, 3);
+		// TODO: Have default be a big empty room instead?
+	}
+
+	generateArena(x, y) {
+		ROT.RNG.setSeed(this.seed);
+		this.rotMap = new ROT.Map.Arena(x, y);
+		this.setupRotMap();	
+	}
+
+	generateDigger() {
 		ROT.RNG.setSeed(this.seed);
 		this.rotMap = new ROT.Map.Digger();
-		this.freeCells.length = 0;
-		
+		this.setupRotMap();		
+	}
+
+	setupRotMap() {
+		this.clearCells();
 		this.rotMap.create((x, y, value) => {
 			if (value) {
 				return;
 			}
-			const key = this.setCharacterAt('.', x, y);
-			this.freeCells.push(key);
+			this.setFloorAt(x, y);
 		});
 
 		if (this.walls) {
 			this.addWalls();
-		}
-		
-		// console.log(this);
+		}		
 	}
 
 	addWalls() {
@@ -47,7 +78,7 @@ class Map {
 				const newY = y + dirY;
 				const wallCell = this.getCellAt(newX, newY);
 				if (!wallCell) {
-					this.setCharacterAt(this.wallsCharacter, newX, newY);
+					this.setWallAt(newX, newY);
 				}
 			});
 		});
@@ -84,6 +115,11 @@ class Map {
 		for (let i = 0; i < 8; i++) {
 			callback(i, dirCoords[i].x, dirCoords[i].y);
 		}
+	}
+
+	clearCells() {
+		this.cells = {};
+		this.freeCells.length = 0;		
 	}
 
 	forEachCell(callback) {
@@ -133,6 +169,16 @@ class Map {
 	getCharacterAt(x, y) {
 		const cell = this.getCellAt(x, y);
 		return (cell) ? cell.getCharacter() : null;
+	}
+
+	setFloorAt(x, y) {
+		const key = this.setCharacterAt(this.floorCharacter, x, y);
+		this.freeCells.push(key);
+		return key;
+	}
+
+	setWallAt(x, y) {
+		return this.setCharacterAt(this.wallsCharacter, x, y);
 	}
 
 	setCharacterAt(char, x, y) {

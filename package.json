@@ -1,6 +1,6 @@
 {
   "name": "rote",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Tools for making Rogue-like games",
   "private": true,
   "main": "src/index.js",

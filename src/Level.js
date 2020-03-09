@@ -18,9 +18,13 @@ class Level {
 			color: this.color,
 			background: this.background,
 			...options.map,
-			seed: this.seed
+			seed: this.seed,
+			generators: options.generators || {}
 		};
 		this.map = new Map(mapOptions);
+		this.actors = [];
+		this.items = [];
+		this.props = [];
 		this.actors = this.generateActors(options, refData);
 		this.items = this.generateItems(options, refData.items);
 		this.props = this.generateProps(options, refData.props);
@@ -144,6 +148,26 @@ class Level {
 		});
 	}
 
+	findThingInView(what) { // 'actors', 'items', 'props'
+		return this[what].filter((a) => this.isInView(a.x, a.y));
+	}
+
+	findActorsInView(excludeHero) {
+		return this.actors.filter((a) => {
+			const inView = this.isInView(a.x, a.y);
+			if (excludeHero) {
+				return inView && !a.isHero;
+			}
+			return inView;
+		});
+	}
+
+	findEverythingInView(options = {}) {
+		return this.findActorsInView(options.excludeHero)
+			.concat(this.findThingInView('items'))
+			.concat(this.findThingInView('props'));
+	}
+
 	findThings(x, y) {
 		const props = this.findProps(x, y);
 		const items = this.findItems(x, y);
@@ -197,14 +221,22 @@ class Level {
 		return things[0];
 	}
 
-	findRandomFreeCell(seed, clearing, retries = 10) {
+	findRandomFreeCell(seed, clearing, retries = 50) {
 		let cell = this.map.getRandomFreeCell();
 		if (!retries) {
 			return cell;
 		}
-		// TODO: take into account props, actors ...?
+		const tryAgain = () => {
+			return this.findRandomFreeCell(seed, clearing, (retries - 1));
+		};
+		if (this.findActors(cell.x, cell.y).length > 0) {
+			return tryAgain();
+		}
+		if (this.findThings(cell.x, cell.y).length > 0) {
+			return tryAgain();
+		}
 		if (this.findMapClearing(cell.x, cell.y) >= clearing) {
-			cell = this.findRandomFreeCell(see, clearing, (retries - 1));
+			return tryAgain();
 		}
 		return cell;
 	}
@@ -484,8 +516,7 @@ class Level {
 			}
 		});
 		const hasMonstersWithWeights = Object.keys(availableMonsterWeights).length > 0;
-		const monsterSpawnNumber = (monsterSpawn === undefined) ? 10 : Number(monsterSpawn);
-		// TODO: parse monsterSpawn into random number using dice notation, e.g. "1d6"
+		const monsterSpawnNumber = (monsterSpawn === undefined) ? 10 : random.roll(monsterSpawn);
 		const totalMonsterSpawnQuantity = monsterSpawnNumber;
 		const actors = [];
 		// Create monsters with fixed quantities

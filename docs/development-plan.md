@@ -8,14 +8,14 @@
 
 ### Gameplay
 
-- [ ] Look around action: show nearby things
+- [x] Look around action: show nearby things
 - [ ] Basic FOV http://ondras.github.io/rot.js/manual/#fov
 - [ ] Basic lighting http://ondras.github.io/rot.js/manual/#lighting
 - [ ] Auto-Time-Advance
 - [ ] States for items, with different colors or characters
 - [ ] Inventory open/close (e.g., chests)
-- [ ] Basic bump combat
-- [ ] Hero health, death
+- [x] Basic bump combat
+- [x] Hero health, death
 - [ ] Basic 8-dir ranged combat
 - [ ] FOV based on environment
 - [ ] Lighting system (allows hiding, stealth)
@@ -27,6 +27,9 @@
 - [ ] Different AI behaviors
 - [ ] Item identification
 - [ ] Level state
+- [ ] Mining action on blocks
+- [ ] XP
+- [ ] Hero AI mode (auto-exploring)
 
 ### UI
 
@@ -71,12 +74,6 @@
 - [ ] Smooth screen centering
 - [ ] Sound effects
 - [ ] Music
-
-### Fun
-
-- [ ] Mining action on blocks
-- [ ] XP
-- [ ] Hero AI mode (auto-exploring)
 
 ### Tech
 

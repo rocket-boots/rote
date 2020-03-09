@@ -43,6 +43,8 @@ class Actor {
 		this.fpMax = this.fp;
 		this.wp = options.wp || 0;		// Will(power)
 		this.wpMax = this.wp;
+		this.mp = options.mp || 0;		// Mana
+		this.mpMax = this.mp;
 		// advancement
 		this.xp = options.xp || 0;
 		this.score = options.score || 0;
@@ -237,7 +239,7 @@ class Actor {
 	}
 
 	getAbilityReadiedAmounts() {
-		const a = { hp: 0, ap: 0, bp: 0, ep: 0 };
+		const a = { hp: 0, ap: 0, bp: 0, ep: 0, fp: 0, wp: 0 };
 		this.abilityList.forEach((abilityKey) => {
 			const ability = this.abilities[abilityKey];
 			Actor.loopOverAbilityCosts(ability, (costKey, val) => {
@@ -341,7 +343,7 @@ class Actor {
 	//---- Gets
 
 	getRandomPoolKey() {
-		return random.pickOne(['ap', 'bp', 'ep']);
+		return random.pickOne(['ap', 'bp', 'ep', 'wp']);
 	}
 
 	getMaxSenseRange() {

@@ -25,6 +25,8 @@ class Game {
 		this.activeLevelIndex = 0;
 		// The generated levels
 		this.levels = [];
+		// Custom funcitons for generating things
+		this.generators = options.generators || {};
 		// Reference data on prototypical "things" (monsters, items)
 		this.data = {
 			monsters: {},
@@ -94,6 +96,14 @@ class Game {
 			}
 		});
 		this.keyboard.on(MAIN_GAME_STATE, 'i', () => { this.showInventory(); });
+		this.keyboard.on(MAIN_GAME_STATE, 'p', () => {
+			this.hero.queueAction('pickup');
+			this.advance();
+		});
+		this.keyboard.on(MAIN_GAME_STATE, 'o', () => {
+			this.hero.queueAction('look');
+			this.advance();
+		});
 		for (let i = 0; i < 9; i++) {
 			const key = String(i + 1);
 			this.keyboard.on(MAIN_GAME_STATE, key, () => {
@@ -144,7 +154,8 @@ class Game {
 		const levelOptions = {
 			customEffects: this.customEffects,
 			...options,
-			levelIndex: this.levels.length
+			levelIndex: this.levels.length,
+			generators: this.generators,
 		};
 		// console.warn(this.customEffects, levelOptions);
 		const level = new Level(levelOptions, this.data);
@@ -422,10 +433,19 @@ class Game {
 				const pickedUp = this.pickupItem(actor, target);
 				if (pickedUp) {
 					message = `${actor.name} picks up the ${target.name}.`;
+				} else if (target) {
+					message = `${actor.name} could not pick up the ${target.name}.`;
+				} else {
+					message = `Nothing to pick up.`;
 				}
 			break;
 			case 'throw':
 				message = level.throw(actor, what, x, y);
+			break;
+			case 'look':
+				const things = this.getActiveLevel().findEverythingInView({ excludeHero: true });
+				const names = things.map((thing) => thing.name || '?').join(', ');
+				message = `${actor.name} looks around and sees: ${names}`;
 			break;
 			case 'wait':
 				actor.wait();
@@ -442,6 +462,7 @@ class Game {
 	}
 
 	pickupItem(actor, thing) {
+		if (!thing) { return false; }
 		if (!thing.portable) { return false; }
 		const level = this.getActiveLevel();
 		const item = level.removeItem(thing);
@@ -480,8 +501,8 @@ class Game {
 		ready(() => {
 			if (this.loadingPromise instanceof Promise) {
 				this.loadingPromise
-					.then(() => { callback(); })
-					.catch((err) => { console.error('Error loading something', err) });
+					.then(() => { callback(); });
+					// .catch((err) => { console.error('Error loading something', err) });
 			} else {
 				callback();
 			}
@@ -517,6 +538,7 @@ class Game {
 					.then(parseJson)
 					.then((obj) => fixInnerObject(obj, key))
 					.then((obj) => { this.setData(key, obj); });
+					//.catch((err) => { console.error(data, key, err); });
 				promises.push(p);
 			} else {
 				this.setData(key, data[key]);

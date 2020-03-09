@@ -7,7 +7,7 @@ const DIRECTION8 = {
 const DIRECTION4 = { 'UP': 0, 'RIGHT': 1, 'DOWN': 2, 'LEFT': 3 };
 const DIRECTION4_ARRAY = ['UP', 'RIGHT', 'DOWN', 'LEFT'];
 
-const USED_KEYS = ['i', 't', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const USED_KEYS = ['i', 't', 'o', 'p', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const KEY_MAP = {
 	"9":	"TAB",
 	"13":	"ENTER",
@@ -41,7 +41,6 @@ const VI_KEYMAP = {
 	74: 'DOWN', // j
 	75: 'UP', // k
 	76: 'RIGHT', // l
-
 };
 const VI_DIAGONAL = {
 	...VI_KEYMAP,
