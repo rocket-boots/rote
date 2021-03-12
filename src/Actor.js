@@ -59,7 +59,7 @@ class Actor {
 		// everything is boiled down to copper pieces
 		// 100 copper = 1 silver
 		// 100 silver = 1 gold
-		this.currency = 0;
+		this.currency = options.currency || 0;
 	}
 
 	draw(display, lighting = {}, inView = false) {
