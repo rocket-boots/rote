@@ -418,7 +418,7 @@ class Game {
 				message = outcome.message;
 			break;
 			case 'teleport':
-				message = `${actor.name} travels to a new location: `;
+				message = `${actor.name} now entering: `;
 				this.teleportActor(actor, action.teleport);
 				{
 					const newLevel = this.getActiveLevel();
