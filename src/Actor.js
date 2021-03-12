@@ -54,6 +54,12 @@ class Actor {
 		this.abilityList = [];
 		// temporary
 		this.initiativeBoost = 0;
+
+		// all actors can carry currency
+		// everything is boiled down to copper pieces
+		// 100 copper = 1 silver
+		// 100 silver = 1 gold
+		this.currency = 0;
 	}
 
 	draw(display, lighting = {}, inView = false) {
