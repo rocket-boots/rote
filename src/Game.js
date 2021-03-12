@@ -385,8 +385,6 @@ class Game {
 		this.display.drawDamage(isDamaged);
 		if (this.hero.dead()) {
 			this.hook('afterHeroDeath', {});
-			// this.print('R.I.P. Congratulations! YOU HAVE DIED!', 'plot');
-			// this.print('Reload the page to play again.', 'tip');
 		}
 		this.draw();
 	}
