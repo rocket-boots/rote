@@ -370,8 +370,8 @@ class Actor {
 		}
 		let highestDefense = 0;
 		this.inventory.loopOverContents((item) => {
-			if ((item.armor || item.defense) > highestDefense) {
-				highestDefense = item.armor || item.defense;
+			if (item.defense > highestDefense) {
+				highestDefense = item.defense;
 			}
 		});
 		return highestDefense;

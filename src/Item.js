@@ -16,6 +16,8 @@ class Item {
 		});
 		this.isWeapon = Boolean(options.weapon);
 		this.damage = parseInt(options.weapon, 10) || 0;
+		this.isDefense = Boolean(options.defense);
+		this.defense = parseInt(options.defense, 10) || 0;
 		this.illumination = options.illumination || 0;
 		this.portable = (typeof options.portable === 'boolean') ? options.portable : true;
 		this.containedIn = null;
