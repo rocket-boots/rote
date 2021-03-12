@@ -299,7 +299,7 @@ class Actor {
 		const costs = Object.keys(ability.readyCost);
 		costs.forEach((key) => {
 			fn(key, parseInt(ability.readyCost[key], 10));
-		});		
+		});
 	}
 
 	static getAbilityEffectsString(ability) {
@@ -362,6 +362,19 @@ class Actor {
 			return geometer.getDistance(x, y, this.x, this.y);
 		}
 		return null; // ?
+	}
+
+	getArmorDefense() {
+		if (!this.isHero) {
+			return 1; // TODO: change this so there is some kind of natural defense for monsters
+		}
+		let highestDefense = 0;
+		this.inventory.loopOverContents((item) => {
+			if ((item.armor || item.defense) > highestDefense) {
+				highestDefense = item.armor || item.defense;
+			}
+		});
+		return highestDefense;
 	}
 
 	getWeaponDamage() {
