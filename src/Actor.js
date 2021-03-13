@@ -3,15 +3,37 @@ const Inventory = require('./Inventory');
 const geometer = require('./geometer');
 const random = require('./random');
 
-const MOVE = 'move';
-const WAIT = 'wait';
-const MONSTER_FACTION = 'monsters';
+class ActionVerbType {
+	static get MOVE () {
+		return 'move';
+	}
+
+	static get WAIT () {
+		return 'wait';
+	}
+}
+
+class FactionType {
+
+	static get HUMAN () {
+		return 'human';
+	}
+
+	static get MONSTER () {
+		return 'monster';
+	}
+
+	static get NEUTRAL () {
+		return 'neutral';
+	}
+}
+
 
 class Actor {
 	constructor(options = {}) {
 		this.type = options.type;
 		this.name = options.name || null;
-		this.faction = options.faction || MONSTER_FACTION;
+		this.faction = options.faction || FactionType.MONSTER;
 		this.isHero = Boolean(options.isHero);
 		this.x = options.x || 0;
 		this.y = options.y || 0;
@@ -54,6 +76,12 @@ class Actor {
 		this.abilityList = [];
 		// temporary
 		this.initiativeBoost = 0;
+
+		// all actors can carry currency
+		// everything is boiled down to copper pieces
+		// 100 copper = 1 silver
+		// 100 silver = 1 gold
+		this.currency = options.currency || 0;
 	}
 
 	draw(display, lighting = {}, inView = false) {
@@ -107,11 +135,11 @@ class Actor {
 
 	doAction() {
 		if (this.dead()) { return { verb: 'rot' }; }
-		const waitAction = { verb: WAIT };
+		const waitAction = { verb: ActionVerbType.WAIT };
 		if (this.actionQueue.length === 0) { return waitAction; }
 		let action = this.actionQueue.shift();
-		const moveAlreadyThere = (action.verb === MOVE && action.x === this.x && action.y === this.y);
-		const moveTooFar = (action.verb === MOVE && this.getDistanceToNextMove(action) > this.maxMovement);
+		const moveAlreadyThere = (action.verb === ActionVerbType.MOVE && action.x === this.x && action.y === this.y);
+		const moveTooFar = (action.verb === ActionVerbType.MOVE && this.getDistanceToNextMove(action) > this.maxMovement);
 		// console.log(this.name, this.x, this.y, action.verb, action.x, action.y, this.getDistanceToNextMove(), this.maxMovement, moveTooFar, 'q', this.actionQueue.length);
 		if (moveAlreadyThere) {
 			return this.doAction();
@@ -139,7 +167,7 @@ class Actor {
 	atEndOfPath() {
 		const nextAction = this.getNextAction();
 		if (!nextAction) { return true; }
-		return (nextAction.verb === MOVE) ? false : true;
+		return (nextAction.verb === ActionVerbType.MOVE) ? false : true;
 	}
 
 	wait() {
@@ -299,7 +327,7 @@ class Actor {
 		const costs = Object.keys(ability.readyCost);
 		costs.forEach((key) => {
 			fn(key, parseInt(ability.readyCost[key], 10));
-		});		
+		});
 	}
 
 	static getAbilityEffectsString(ability) {
@@ -364,6 +392,19 @@ class Actor {
 		return null; // ?
 	}
 
+	getArmorDefense() {
+		if (!this.isHero) {
+			return 1; // TODO: change this so there is some kind of natural defense for monsters
+		}
+		let highestDefense = 0;
+		this.inventory.loopOverContents((item) => {
+			if (item.defense > highestDefense) {
+				highestDefense = item.defense;
+			}
+		});
+		return highestDefense;
+	}
+
 	getWeaponDamage() {
 		if (!this.isHero) {
 			return 1; // TODO: change this so there is some kind of natural damage for monsters
@@ -391,7 +432,7 @@ class Actor {
 		const astar = new ROT.Path.AStar(x, y, passableCallback, { topology: 4 });
 		const path = this.actionQueue;
 		const pathCallback = function(x, y) {
-			path.push({ x, y, verb: MOVE });
+			path.push({ x, y, verb: ActionVerbType.MOVE });
 		};
 		if (path[0] && path[0].x === this.x && path[0].y === this.y) {
 			console.alert('removing first');

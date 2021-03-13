@@ -139,7 +139,7 @@ class Game {
 
 	showInventory() {
 		const items = this.hero.inventory.getString();
-		this.print('Inventory: ' + items);		
+		this.print('Inventory: ' + items);
 	}
 
 	draw() {
@@ -297,7 +297,7 @@ class Game {
 			// TODO: allow pushes based on authority/size
 		} else { // just blocked
 			return { x, y, moved: false };
-		}		
+		}
 	}
 
 	static canBumpSwitch(actor, blocker) {
@@ -384,8 +384,7 @@ class Game {
 		const isDamaged = (startHp > this.hero.hp);
 		this.display.drawDamage(isDamaged);
 		if (this.hero.dead()) {
-			this.print('R.I.P. Congratulations! YOU HAVE DIED!', 'plot');
-			this.print('Reload the page to play again.', 'tip');
+			this.hook('afterHeroDeath', {});
 		}
 		this.draw();
 	}
@@ -419,7 +418,7 @@ class Game {
 				message = outcome.message;
 			break;
 			case 'teleport':
-				message = `${actor.name} travels to a new location: `;
+				message = `${actor.name} now entering: `;
 				this.teleportActor(actor, action.teleport);
 				{
 					const newLevel = this.getActiveLevel();
